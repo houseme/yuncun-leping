@@ -1,0 +1,20 @@
+# CLI tool, only in development environment.
+# https://goframe.org/pages/viewpage.action?pageId=3673173
+gfcli:
+  # dao 生成
+  gen:
+    dao:
+      - link: "mysql:root:root@tcp(127.0.0.1:3306)/comments?charset=utf8mb4&parseTime=True&loc=Local"
+        removePrefix: "gf_"
+        descriptionTag: true
+        noModelComment: true
+        withTime: false
+        tables: "hot_comments,songs"
+        group: "default"
+        overwriteDao: true
+        clear: true
+        path: "/Users/qun/Documents/golang/houseme/yuncun/internal/database"
+        typeMapping:
+          decimal:
+            type: "decimal.Decimal"
+            import: "github.com/shopspring/decimal"
