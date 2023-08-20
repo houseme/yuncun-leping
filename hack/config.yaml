@@ -13,7 +13,7 @@ gfcli:
         group: "default"
         overwriteDao: true
         clear: true
-        path: "/Users/qun/Documents/golang/houseme/yuncun/internal/database"
+        path: "internal/database"
         typeMapping:
           decimal:
             type: "decimal.Decimal"

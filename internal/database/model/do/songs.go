@@ -12,14 +12,14 @@ import (
 // Songs is the golang structure of table songs for DAO operations like Where/Data.
 type Songs struct {
 	g.Meta        `orm:"table:songs, do:true"`
-	Id            interface{} //
-	SongId        interface{} //
-	Title         interface{} //
-	Images        interface{} //
-	Author        interface{} //
-	Album         interface{} //
-	Description   interface{} //
-	PublishedDate *gtime.Time //
-	CreatedAt     *gtime.Time //
-	UpdatedAt     *gtime.Time //
+	Id            interface{} // ID
+	SongId        interface{} // 歌曲 ID
+	Title         interface{} // 歌曲标题
+	Images        interface{} // 图片
+	Author        interface{} // 作者
+	Album         interface{} // 相册
+	Description   interface{} // 描述
+	PublishedDate *gtime.Time // 发布时间
+	CreateTime    *gtime.Time // 创建时间
+	ModifyTime    *gtime.Time // 修改时间
 }

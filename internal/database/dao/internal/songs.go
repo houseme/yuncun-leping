@@ -20,16 +20,16 @@ type SongsDao struct {
 
 // SongsColumns defines and stores column names for table songs.
 type SongsColumns struct {
-	Id            string //
-	SongId        string //
-	Title         string //
-	Images        string //
-	Author        string //
-	Album         string //
-	Description   string //
-	PublishedDate string //
-	CreatedAt     string //
-	UpdatedAt     string //
+	Id            string // ID
+	SongId        string // 歌曲 ID
+	Title         string // 歌曲标题
+	Images        string // 图片
+	Author        string // 作者
+	Album         string // 相册
+	Description   string // 描述
+	PublishedDate string // 发布时间
+	CreateTime    string // 创建时间
+	ModifyTime    string // 修改时间
 }
 
 // songsColumns holds the columns for table songs.
@@ -42,8 +42,8 @@ var songsColumns = SongsColumns{
 	Album:         "album",
 	Description:   "description",
 	PublishedDate: "published_date",
-	CreatedAt:     "created_at",
-	UpdatedAt:     "updated_at",
+	CreateTime:    "create_time",
+	ModifyTime:    "modify_time",
 }
 
 // NewSongsDao creates and returns a new DAO object for table data access.

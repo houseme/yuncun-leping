@@ -20,18 +20,18 @@ type HotCommentsDao struct {
 
 // HotCommentsColumns defines and stores column names for table hot_comments.
 type HotCommentsColumns struct {
-	Id            string //
-	SongId        string //
-	UserId        string //
-	Nickname      string //
-	AvatarUrl     string //
-	CommentId     string //
-	LikedCount    string //
-	Content       string //
-	PublishedDate string //
-	CheckoutDate  string //
-	CreatedAt     string //
-	UpdatedAt     string //
+	Id            string // ID
+	SongId        string // 歌曲 ID
+	UserId        string // 用户 ID
+	Nickname      string // 昵称
+	AvatarUrl     string // 头像地址
+	CommentId     string // 评论 ID
+	LikedCount    string // 喜欢数
+	Content       string // 内容
+	PublishedDate string // 发布时间
+	CheckoutDate  string // 获取时间
+	CreateTime    string // 创建时间
+	ModifyTime    string // 更新时间
 }
 
 // hotCommentsColumns holds the columns for table hot_comments.
@@ -46,8 +46,8 @@ var hotCommentsColumns = HotCommentsColumns{
 	Content:       "content",
 	PublishedDate: "published_date",
 	CheckoutDate:  "checkout_date",
-	CreatedAt:     "created_at",
-	UpdatedAt:     "updated_at",
+	CreateTime:    "create_time",
+	ModifyTime:    "modify_time",
 }
 
 // NewHotCommentsDao creates and returns a new DAO object for table data access.
