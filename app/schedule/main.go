@@ -22,9 +22,11 @@ package main
 import (
 	_ "github.com/houseme/yuncun-leping/app/schedule/internal/packed"
 
-	_ "github.com/houseme/yuncun-leping/app/schedule/internal/logic"
-
+	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
+	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 	"github.com/gogf/gf/v2/os/gctx"
+
+	_ "github.com/houseme/yuncun-leping/app/schedule/internal/logic"
 
 	"github.com/houseme/yuncun-leping/app/schedule/internal/cmd"
 )

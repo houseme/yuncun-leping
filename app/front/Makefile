@@ -1,6 +1,6 @@
 ROOT_DIR    = $(shell pwd)
 NAMESPACE   = "default"
-DEPLOY_NAME = "api-template"
-DOCKER_NAME = "api-template"
+DEPLOY_NAME = "front"
+DOCKER_NAME = "front"
 
 include ../../hack/hack.mk
