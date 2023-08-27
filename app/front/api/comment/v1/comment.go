@@ -35,3 +35,25 @@ type Req struct {
 type Res struct {
 	*model.CommentOutput
 }
+
+// RedirectReq redirect req
+type RedirectReq struct {
+	g.Meta `path:"/music/:songID" tags:"Comment" method:"get" summary:"music comment"`
+	*model.RedirectInput
+}
+
+// RedirectRes redirect res
+type RedirectRes struct {
+	*model.RedirectOutput
+}
+
+// CounterReq counter req
+type CounterReq struct {
+	g.Meta `path:"/counter" tags:"Comment" method:"get" summary:"music comment"`
+	*model.CounterInput
+}
+
+// CounterRes counter res
+type CounterRes struct {
+	*model.CounterOutput
+}

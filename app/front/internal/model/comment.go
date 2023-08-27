@@ -52,3 +52,13 @@ type CounterOutput struct {
 	CommentsCount   int64 `json:"comments_count" description:"评论总数"`
 	APIRequestCount int64 `json:"api_request_count" description:"API 请求总数"`
 }
+
+// RedirectInput struct
+type RedirectInput struct {
+	SongID uint64 `json:"song_id" description:"歌曲 ID"`
+}
+
+// RedirectOutput struct
+type RedirectOutput struct {
+	RedirectURL string `json:"redirect_url" description:"重定向地址"`
+}

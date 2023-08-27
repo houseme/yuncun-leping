@@ -17,9 +17,13 @@
  *
  */
 
-package consts
+package model
 
-const (
-	// DefaultLoggerName .
-	DefaultLoggerName = ""
-)
+// DefaultHandlerResponse .
+type DefaultHandlerResponse struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
+	Time    int64       `json:"time,string"` // 返回当前响应时间
+	TraceID string      `json:"traceID"`     // 请求唯一标识
+}

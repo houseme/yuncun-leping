@@ -19,6 +19,7 @@ package comment
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/houseme/yuncun-leping/app/front/internal/model"
 	"github.com/houseme/yuncun-leping/app/front/internal/service"
@@ -37,5 +38,18 @@ func (s *sComment) One(ctx context.Context, in *model.CommentInput) (out *model.
 
 // Counter query count from table for comment.
 func (s *sComment) Counter(ctx context.Context, in *model.CounterInput) (out *model.CounterOutput, err error) {
+	out = &model.CounterOutput{
+		SongsCount:      100,
+		CommentsCount:   100,
+		APIRequestCount: 1000,
+	}
+	return
+}
+
+// Redirect to music.
+func (s *sComment) Redirect(ctx context.Context, in *model.RedirectInput) (out *model.RedirectOutput, err error) {
+	out = &model.RedirectOutput{
+		RedirectURL: fmt.Sprintf("https://music.163.com/song/media/outer/url?id=%d.mp3", in.SongID),
+	}
 	return
 }

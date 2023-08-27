@@ -26,7 +26,9 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
 
+	"github.com/houseme/yuncun-leping/app/front/internal/controller/comment"
 	"github.com/houseme/yuncun-leping/app/front/internal/controller/hello"
+	"github.com/houseme/yuncun-leping/app/front/internal/service"
 )
 
 var (
@@ -38,9 +40,11 @@ var (
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
 			s.Group("/", func(group *ghttp.RouterGroup) {
-				group.Middleware(ghttp.MiddlewareHandlerResponse)
+				group.Middleware(service.Middleware().Initializer, service.Middleware().ClientIP, service.Middleware().Logger, service.Middleware().HandlerResponse)
+				// group.Middleware(ghttp.MiddlewareHandlerResponse)
 				group.Bind(
 					hello.New(),
+					comment.New(),
 				)
 			})
 			s.Run()
