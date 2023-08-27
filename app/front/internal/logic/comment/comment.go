@@ -23,6 +23,7 @@ import (
 
 	"github.com/houseme/yuncun-leping/app/front/internal/model"
 	"github.com/houseme/yuncun-leping/app/front/internal/service"
+	"github.com/houseme/yuncun-leping/internal/database/dao"
 )
 
 type sComment struct{}
@@ -39,9 +40,15 @@ func (s *sComment) One(ctx context.Context, in *model.CommentInput) (out *model.
 // Counter query count from table for comment.
 func (s *sComment) Counter(ctx context.Context, in *model.CounterInput) (out *model.CounterOutput, err error) {
 	out = &model.CounterOutput{
-		SongsCount:      100,
-		CommentsCount:   100,
-		APIRequestCount: 1000,
+		SongsCount:      0,
+		CommentsCount:   0,
+		APIRequestCount: 0,
+	}
+	if out.SongsCount, err = dao.Songs.Ctx(ctx).Count(); err != nil {
+		return
+	}
+	if out.CommentsCount, err = dao.HotComments.Ctx(ctx).Count(); err != nil {
+		return
 	}
 	return
 }

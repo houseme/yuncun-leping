@@ -48,9 +48,9 @@ type CounterInput struct {
 
 // CounterOutput struct
 type CounterOutput struct {
-	SongsCount      int64 `json:"songs_count" description:"歌曲总数"`
-	CommentsCount   int64 `json:"comments_count" description:"评论总数"`
-	APIRequestCount int64 `json:"api_request_count" description:"API 请求总数"`
+	SongsCount      int `json:"songs_count" description:"歌曲总数"`
+	CommentsCount   int `json:"comments_count" description:"评论总数"`
+	APIRequestCount int `json:"api_request_count" description:"API 请求总数"`
 }
 
 // RedirectInput struct

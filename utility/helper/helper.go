@@ -1,3 +1,22 @@
+/*
+ * Copyright yuncun-leping Author(https://houseme.github.io/yuncun-leping/). All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * You can obtain one at https://github.com/houseme/yuncun-leping.
+ *
+ */
+
 package helper
 
 import (
@@ -58,20 +77,21 @@ var (
 )
 
 // Helper .
-func Helper() *utilHelper {
-	return &utilHelper{}
+func Helper() *UtilHelper {
+	return &UtilHelper{}
 }
 
-type utilHelper struct {
+// UtilHelper .
+type UtilHelper struct {
 }
 
 // UserAgent is a default http userAgent
-func (h *utilHelper) UserAgent(_ context.Context) string {
+func (h *UtilHelper) UserAgent(_ context.Context) string {
 	return headerUserAgent
 }
 
 // InitTrxID .根据上下文以及账户标识获取交易订单号
-func (h *utilHelper) InitTrxID(ctx context.Context, ano uint64) uint64 {
+func (h *UtilHelper) InitTrxID(ctx context.Context, ano uint64) uint64 {
 	ctx, span := gtrace.NewSpan(ctx, "tracing-utility-Helper-InitTrxID")
 	defer span.End()
 
@@ -88,7 +108,7 @@ func (h *utilHelper) InitTrxID(ctx context.Context, ano uint64) uint64 {
 }
 
 // InitOrderID init64 order id
-func (h *utilHelper) InitOrderID(ctx context.Context, datacenterID, workerID int64) int64 {
+func (h *UtilHelper) InitOrderID(ctx context.Context, datacenterID, workerID int64) int64 {
 	g.Log(h.Logger(ctx)).Debug(ctx, "InitOrderID DatacenterID:", datacenterID, " WorkerID:", workerID)
 	if datacenterID < 0 || datacenterID > snowflake.GetDatacenterIDMax() {
 		return 0
@@ -103,7 +123,7 @@ func (h *utilHelper) InitOrderID(ctx context.Context, datacenterID, workerID int
 // SnowflakeInstance Get Client Instance
 // datacenterID Datacenter ID must be greater than or equal to 0
 // workerID Worker ID must be greater than or equal to 0
-func (h *utilHelper) SnowflakeInstance(ctx context.Context, datacenterID, workerID int64) *snowflake.Snowflake {
+func (h *UtilHelper) SnowflakeInstance(ctx context.Context, datacenterID, workerID int64) *snowflake.Snowflake {
 	instanceKey := fmt.Sprintf("%s.%02d.%02d", helperUtilSnowflake, datacenterID, workerID)
 	g.Log(h.Logger(ctx)).Debug(ctx, "InitOrderID SnowflakeInstance ", instanceKey, workerID, datacenterID)
 	return localInstances.GetOrSetFuncLock(instanceKey, func() interface{} {
@@ -116,12 +136,12 @@ func (h *utilHelper) SnowflakeInstance(ctx context.Context, datacenterID, worker
 }
 
 // AuthToken user auth token
-func (h *utilHelper) AuthToken(ctx context.Context, accountNo uint64) string {
+func (h *UtilHelper) AuthToken(ctx context.Context, accountNo uint64) string {
 	return gconv.String(h.InitTrxID(ctx, accountNo%32)) + h.InitRandStr(64) + gtime.TimestampNanoStr()
 }
 
 // InitRandStr RandStringBytesMaskImprSrcUnsafe
-func (h *utilHelper) InitRandStr(n int) string {
+func (h *UtilHelper) InitRandStr(n int) string {
 	b := make([]byte, n)
 	// A src.Int63() generates 63 random bits, enough for letterIdxMax characters!
 	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
@@ -140,7 +160,7 @@ func (h *utilHelper) InitRandStr(n int) string {
 }
 
 // UcFirst 首字母大些
-func (h *utilHelper) UcFirst(str string) string {
+func (h *UtilHelper) UcFirst(str string) string {
 	for i, v := range str {
 		return string(unicode.ToUpper(v)) + str[i+1:]
 	}
@@ -148,7 +168,7 @@ func (h *utilHelper) UcFirst(str string) string {
 }
 
 // LcFirst 首字母小写
-func (h *utilHelper) LcFirst(str string) string {
+func (h *UtilHelper) LcFirst(str string) string {
 	for i, v := range str {
 		return string(unicode.ToLower(v)) + str[i+1:]
 	}
@@ -156,7 +176,7 @@ func (h *utilHelper) LcFirst(str string) string {
 }
 
 // GetOutBoundIP 获取本机 IP
-func (h *utilHelper) GetOutBoundIP(ctx context.Context) string {
+func (h *UtilHelper) GetOutBoundIP(ctx context.Context) string {
 	conn, err := net.Dial("udp", "119.29.29.29:80")
 	if err != nil {
 		g.Log(h.Logger(ctx)).Error(ctx, " GetOutBoundIP udp get Ip failed err: ", err)
@@ -171,7 +191,7 @@ func (h *utilHelper) GetOutBoundIP(ctx context.Context) string {
 }
 
 // GetLocalIPV4 获取 IPV4 IP，没有则返回空
-func (h *utilHelper) GetLocalIPV4(ctx context.Context) string {
+func (h *UtilHelper) GetLocalIPV4(ctx context.Context) string {
 	inters, err := net.Interfaces()
 	if err != nil {
 		panic(err)
@@ -199,12 +219,12 @@ func (h *utilHelper) GetLocalIPV4(ctx context.Context) string {
 }
 
 // Logger .获取上下文中的 logger
-func (h *utilHelper) Logger(ctx context.Context) string {
+func (h *UtilHelper) Logger(ctx context.Context) string {
 	return gconv.String(ctx.Value("logger"))
 }
 
 // EncryptSignData sign data
-func (h *utilHelper) EncryptSignData(_ context.Context, data interface{}, key []byte) ([]byte, error) {
+func (h *UtilHelper) EncryptSignData(_ context.Context, data interface{}, key []byte) ([]byte, error) {
 	var byteInfo, err = gjson.Encode(data)
 	if err != nil {
 		return byteInfo, gerror.Wrap(err, "EncryptSignData json encode failed")
@@ -213,7 +233,7 @@ func (h *utilHelper) EncryptSignData(_ context.Context, data interface{}, key []
 }
 
 // Header .
-func (h *utilHelper) Header(_ context.Context) map[string]string {
+func (h *UtilHelper) Header(_ context.Context) map[string]string {
 	return g.MapStrStr{
 		"Accept-Encoding": "gzip, deflate, br",
 		"Accept-Language": "zh-CN,zh;q=0.9",
@@ -224,7 +244,7 @@ func (h *utilHelper) Header(_ context.Context) map[string]string {
 }
 
 // HeaderToMap covert request headers to map.
-func (h *utilHelper) HeaderToMap(header http.Header) map[string]interface{} {
+func (h *UtilHelper) HeaderToMap(header http.Header) map[string]interface{} {
 	m := make(map[string]interface{})
 	for k, v := range header {
 		if len(v) > 1 {
@@ -237,12 +257,12 @@ func (h *utilHelper) HeaderToMap(header http.Header) map[string]interface{} {
 }
 
 // EncryptPass .加密处理
-func (h *utilHelper) EncryptPass(pass string) ([]byte, error) {
+func (h *UtilHelper) EncryptPass(pass string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
 }
 
 // CompareHashAndPassword 校验密码。
-func (h *utilHelper) CompareHashAndPassword(inputPass, authPass string) bool {
+func (h *UtilHelper) CompareHashAndPassword(inputPass, authPass string) bool {
 	if err := bcrypt.CompareHashAndPassword([]byte(authPass), []byte(inputPass)); err != nil {
 		return false
 	}
@@ -250,12 +270,12 @@ func (h *utilHelper) CompareHashAndPassword(inputPass, authPass string) bool {
 }
 
 // RequestTime .request time
-func (h *utilHelper) RequestTime(_ context.Context, ts string) *gtime.Time {
+func (h *UtilHelper) RequestTime(_ context.Context, ts string) *gtime.Time {
 	return gtime.NewFromStrFormat(ts, "YmdHis")
 }
 
 // ConcatenateSignSource get sign url 排序并拼接签名的内容信息
-func (h *utilHelper) ConcatenateSignSource(ctx context.Context, data interface{}) string {
+func (h *UtilHelper) ConcatenateSignSource(ctx context.Context, data interface{}) string {
 	ctx, span := gtrace.NewSpan(ctx, "tracing-enterprise-utility-ConcatenateSignSource")
 	defer span.End()
 
@@ -296,12 +316,12 @@ func (h *utilHelper) ConcatenateSignSource(ctx context.Context, data interface{}
 }
 
 // DecryptSignDataInfo sign data 数据执行 aes 解密
-func (h *utilHelper) DecryptSignDataInfo(src []byte, key []byte) (dst []byte, err error) {
+func (h *UtilHelper) DecryptSignDataInfo(src []byte, key []byte) (dst []byte, err error) {
 	return aes.NewAESCrypt(key).Decrypt(src, gocrypto.ECB)
 }
 
 // HexDecodeString .
-func (h *utilHelper) HexDecodeString(ctx context.Context, data string, key []byte) ([]byte, error) {
+func (h *UtilHelper) HexDecodeString(ctx context.Context, data string, key []byte) ([]byte, error) {
 	signData, err := hex.DecodeString(data)
 	if err != nil {
 		return nil, err
@@ -310,13 +330,13 @@ func (h *utilHelper) HexDecodeString(ctx context.Context, data string, key []byt
 }
 
 // Sha256Of returns the sha256 of the input string
-func (h *utilHelper) Sha256Of(input []byte) string {
+func (h *UtilHelper) Sha256Of(input []byte) string {
 	sum := sha256.Sum256(input)
 	return hex.EncodeToString(sum[:])
 }
 
 // CheckFileExists .
-func (h *utilHelper) CheckFileExists(ctx context.Context, filePath string) (err error) {
+func (h *UtilHelper) CheckFileExists(ctx context.Context, filePath string) (err error) {
 	if !gfile.Exists(filePath) {
 		if err = gfile.Mkdir(filePath); err != nil {
 			return err
@@ -329,7 +349,7 @@ func (h *utilHelper) CheckFileExists(ctx context.Context, filePath string) (err 
 }
 
 // UserAgentIPHash user agent ip hash
-func (h *utilHelper) UserAgentIPHash(useragent string, ip string) string {
+func (h *UtilHelper) UserAgentIPHash(useragent string, ip string) string {
 	data, err := h.Sha256OfShort(fmt.Sprintf("%s-%s-%s-%d", useragent, ip, time.Now().String(), rand.Int()))
 	if err != nil {
 		return ""
@@ -339,7 +359,7 @@ func (h *utilHelper) UserAgentIPHash(useragent string, ip string) string {
 }
 
 // Sha256OfShort returns the sha256 of the input string
-func (h *utilHelper) Sha256OfShort(input string) ([]byte, error) {
+func (h *UtilHelper) Sha256OfShort(input string) ([]byte, error) {
 	algorithm := sha256.New()
 	if _, err := algorithm.Write([]byte(strings.TrimSpace(input))); err != nil {
 		return nil, gerror.Wrap(err, "algorithm write failed")
@@ -348,12 +368,12 @@ func (h *utilHelper) Sha256OfShort(input string) ([]byte, error) {
 }
 
 // Base58Encode encodes the input byte array to base58 string
-func (h *utilHelper) Base58Encode(data []byte) string {
+func (h *UtilHelper) Base58Encode(data []byte) string {
 	return base58.Encode(data)
 }
 
 // PasswordBase58Hash password base58 hash
-func (h *utilHelper) PasswordBase58Hash(password string) (string, error) {
+func (h *UtilHelper) PasswordBase58Hash(password string) (string, error) {
 	data, err := h.Sha256OfShort(password)
 	if err != nil {
 		return "", gerror.Wrap(err, "password base58 hash sha256 short failed")
@@ -362,7 +382,7 @@ func (h *utilHelper) PasswordBase58Hash(password string) (string, error) {
 }
 
 // GenerateShortLink generate short link
-func (h *utilHelper) GenerateShortLink(_ context.Context, url string) (str string, err error) {
+func (h *UtilHelper) GenerateShortLink(_ context.Context, url string) (str string, err error) {
 	var urlHash []byte
 	if urlHash, err = h.Sha256OfShort(url); err != nil {
 		return "", gerror.Wrap(err, "generate short link sha256 short failed")
@@ -373,17 +393,17 @@ func (h *utilHelper) GenerateShortLink(_ context.Context, url string) (str strin
 }
 
 // AESEncrypt encrypts the input byte array with the given key
-func (h *utilHelper) AESEncrypt(_ context.Context, key, data []byte) (dst string, err error) {
+func (h *UtilHelper) AESEncrypt(_ context.Context, key, data []byte) (dst string, err error) {
 	return aes.NewAESCrypt(key).EncryptToString(gocrypto.Base64, data, gocrypto.ECB)
 }
 
 // AESDecrypt decrypts the input byte array with the given key
-func (h *utilHelper) AESDecrypt(_ context.Context, key, data []byte) (dst string, err error) {
+func (h *UtilHelper) AESDecrypt(_ context.Context, key, data []byte) (dst string, err error) {
 	return aes.NewAESCrypt(key).DecryptToString(gocrypto.Base64, data, gocrypto.ECB)
 }
 
 // CreateAccessToken create access token
-func (h *utilHelper) CreateAccessToken(ctx context.Context, accountNo uint64) (token string, err error) {
+func (h *UtilHelper) CreateAccessToken(ctx context.Context, accountNo uint64) (token string, err error) {
 	var hash []byte
 	if hash, err = h.Sha256OfShort(gconv.String(h.InitTrxID(ctx, accountNo))); err != nil {
 		err = gerror.Wrap(err, "utilHelper CreateAccessToken Sha256OfShort failed")
@@ -394,7 +414,7 @@ func (h *utilHelper) CreateAccessToken(ctx context.Context, accountNo uint64) (t
 }
 
 // GetOriginPassword .
-func (h *utilHelper) GetOriginPassword(aesPasswd, salt string) (passwd string, err error) {
+func (h *UtilHelper) GetOriginPassword(aesPasswd, salt string) (passwd string, err error) {
 	decodePasswdByte, _ := hex.DecodeString(aesPasswd)
 	aesByte, err := gaes.Decrypt(decodePasswdByte, []byte(salt), []byte(iv))
 	if err != nil {
@@ -405,7 +425,7 @@ func (h *utilHelper) GetOriginPassword(aesPasswd, salt string) (passwd string, e
 }
 
 // GetAESPassword .
-func (h *utilHelper) GetAESPassword(originPasswd string) (passwd string, salt string, err error) {
+func (h *UtilHelper) GetAESPassword(originPasswd string) (passwd string, salt string, err error) {
 	rand.NewSource(time.Now().UnixNano())
 	headSalt := rand.Intn(8) + 1
 	salt = strconv.Itoa(headSalt) + grand.Digits(15)
@@ -418,7 +438,7 @@ func (h *utilHelper) GetAESPassword(originPasswd string) (passwd string, salt st
 }
 
 // ReplaceCdnStaticAddress .
-func (h *utilHelper) ReplaceCdnStaticAddress(ctx context.Context, url string) string {
+func (h *UtilHelper) ReplaceCdnStaticAddress(ctx context.Context, url string) string {
 	if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
 		return url
 	}
