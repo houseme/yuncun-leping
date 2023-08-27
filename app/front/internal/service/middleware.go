@@ -21,6 +21,10 @@ type (
 		Logger(r *ghttp.Request)
 		// HandlerResponse is a middleware handler for ghttp.Request.
 		HandlerResponse(r *ghttp.Request)
+		// AuthorizationForAPIKey is a middleware handler for ghttp.Request.
+		AuthorizationForAPIKey(r *ghttp.Request)
+		// AuthorizationForPassword is a middleware handler for ghttp.Request.
+		AuthorizationForPassword(r *ghttp.Request)
 	}
 )
 

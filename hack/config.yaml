@@ -9,7 +9,7 @@ gfcli:
         descriptionTag: true
         noModelComment: true
         withTime: false
-        tables: "hot_comments,songs"
+        tables: "hot_comments,songs,app_info,request_log"
         group: "default"
         overwriteDao: true
         clear: true

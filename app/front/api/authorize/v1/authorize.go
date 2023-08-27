@@ -17,27 +17,21 @@
  *
  */
 
-// Package hello for hello.
-package hello
+package v1
 
 import (
-	"context"
-
 	"github.com/gogf/gf/v2/frame/g"
 
-	v1 "github.com/houseme/yuncun-leping/app/front/api/hello/v1"
+	"github.com/houseme/yuncun-leping/app/front/internal/model"
 )
 
-// Controller struct
-type Controller struct{}
-
-// New Controller
-func New() *Controller {
-	return &Controller{}
+// Req .
+type Req struct {
+	g.Meta `path:"/authorize" tags:"Authorize" method:"Post" summary:"authorize token"`
+	*model.AuthorizeInput
 }
 
-// Hello say hello
-func (c *Controller) Hello(ctx context.Context, req *v1.Req) (res *v1.Res, err error) {
-	g.RequestFromCtx(ctx).Response.Writeln("Hello World!")
-	return
+// Res .
+type Res struct {
+	*model.AuthorizeOutput
 }

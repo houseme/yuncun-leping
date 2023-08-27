@@ -26,8 +26,8 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
 
+	"github.com/houseme/yuncun-leping/app/front/internal/controller/authorize"
 	"github.com/houseme/yuncun-leping/app/front/internal/controller/comment"
-	"github.com/houseme/yuncun-leping/app/front/internal/controller/hello"
 	"github.com/houseme/yuncun-leping/app/front/internal/service"
 )
 
@@ -39,13 +39,20 @@ var (
 		Brief: "start http server",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
+			s.SetRewrite("/favicon.ico", "/resource/image/favicon.ico")
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(service.Middleware().Initializer, service.Middleware().ClientIP, service.Middleware().Logger, service.Middleware().HandlerResponse)
 				// group.Middleware(ghttp.MiddlewareHandlerResponse)
 				group.Bind(
-					hello.New(),
-					comment.New(),
+					authorize.New(),
 				)
+				group.Group("/api.v1/front", func(group *ghttp.RouterGroup) {
+					// group.Middleware(service.Middleware().AuthorizationForPassword)
+					group.Bind(
+						comment.New(),
+					)
+				})
+
 			})
 			s.Run()
 			return nil

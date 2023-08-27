@@ -5,6 +5,7 @@
 package logic
 
 import (
+	_ "github.com/houseme/yuncun-leping/app/front/internal/logic/authorize"
 	_ "github.com/houseme/yuncun-leping/app/front/internal/logic/comment"
 	_ "github.com/houseme/yuncun-leping/app/front/internal/logic/middleware"
 )

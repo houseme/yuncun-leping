@@ -27,7 +27,7 @@ import (
 
 // Req struct
 type Req struct {
-	g.Meta `path:"/" tags:"Comment" method:"get" summary:"music comment"`
+	g.Meta `path:"/comment" tags:"Comment" method:"get" summary:"music comment"`
 	*model.CommentInput
 }
 
@@ -38,7 +38,7 @@ type Res struct {
 
 // RedirectReq redirect req
 type RedirectReq struct {
-	g.Meta `path:"/music/:songID" tags:"Comment" method:"get" summary:"music comment"`
+	g.Meta `path:"/music/:songID/:contentType" tags:"Comment" method:"get" summary:"music redirect"`
 	*model.RedirectInput
 }
 
@@ -49,7 +49,7 @@ type RedirectRes struct {
 
 // CounterReq counter req
 type CounterReq struct {
-	g.Meta `path:"/counter" tags:"Comment" method:"get" summary:"music comment"`
+	g.Meta `path:"/counter" tags:"Comment" method:"get" summary:"music counter"`
 	*model.CounterInput
 }
 

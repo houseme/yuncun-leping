@@ -14,7 +14,7 @@ import (
 type (
 	IComment interface {
 		// One query one record from table for comment.
-		One(ctx context.Context, in *model.CommentInput) (out *model.CommentOutput, err error)
+		Home(ctx context.Context, in *model.CommentInput) (out *model.CommentOutput, err error)
 		// Counter query count from table for comment.
 		Counter(ctx context.Context, in *model.CounterInput) (out *model.CounterOutput, err error)
 		// Redirect to music.

@@ -21,6 +21,7 @@ package model
 
 // CommentInput struct
 type CommentInput struct {
+	*AuthBase `json:"-"`
 }
 
 // CommentOutput struct
@@ -32,6 +33,7 @@ type CommentOutput struct {
 	Summary              string `json:"summary" description:"歌曲简介"`
 	Album                string `json:"album" description:"歌曲专辑"`
 	Mp3URL               string `json:"mp3_url" description:"歌曲地址"`
+	LyricURL             string `json:"lyric_url" description:"歌词地址"`
 	PublishDate          string `json:"publish_date" description:"歌曲发布日期"`
 	CommentID            int64  `json:"comment_id" description:"评论 ID"`
 	CommentUserID        int64  `json:"comment_user_id" description:"评论用户 ID"`
@@ -44,6 +46,7 @@ type CommentOutput struct {
 
 // CounterInput struct
 type CounterInput struct {
+	*AuthBase `json:"-"`
 }
 
 // CounterOutput struct
@@ -55,7 +58,9 @@ type CounterOutput struct {
 
 // RedirectInput struct
 type RedirectInput struct {
-	SongID uint64 `json:"song_id" description:"歌曲 ID"`
+	*AuthBase   `json:"-"`
+	SongID      uint64 `json:"song_id" description:"歌曲 ID"`
+	ContentType string `json:"content_type" description:"内容类型 mp3|lyric" v:"required|in:mp3,lyric#内容类型不能为空 | 内容类型必须在 mp3,lyric 中"`
 }
 
 // RedirectOutput struct

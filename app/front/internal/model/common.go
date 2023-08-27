@@ -27,3 +27,17 @@ type DefaultHandlerResponse struct {
 	Time    int64       `json:"time,string"` // 返回当前响应时间
 	TraceID string      `json:"traceID"`     // 请求唯一标识
 }
+
+// AuthorizationToken is the golang structure for AuthorizationToken.
+type AuthorizationToken struct {
+	AuthToken string `json:"authToken" dc:"认证 token"`
+	AuthTime  int64  `json:"authTime" dc:"认证时间"`
+	AuthAppNo uint64 `json:"authAppNo" dc:"认证应用编号"`
+	AuthType  uint   `json:"authType" dc:"认证类型 100 app key，200 app id"`
+}
+
+// AuthBase is the base struct for auth.
+type AuthBase struct {
+	AuthAppNo uint64 `json:"authAppNo" dc:"认证应用编号"`
+	AuthType  uint   `json:"authType" dc:"认证类型 100 app key，200 app id"`
+}

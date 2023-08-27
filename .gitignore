@@ -17,6 +17,8 @@ temp/
 temp.yaml
 bin
 **/config/config.yaml
+**/config/config.dev.yaml
 app/console
 app/front/resources/html/index.html
 app/front/resources/html/chiwan.html
+*.log

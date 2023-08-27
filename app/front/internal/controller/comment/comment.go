@@ -23,6 +23,7 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/gtrace"
 
 	v1 "github.com/houseme/yuncun-leping/app/front/api/comment/v1"
 	"github.com/houseme/yuncun-leping/app/front/internal/service"
@@ -38,12 +39,22 @@ func New() *Controller {
 }
 
 // Home for comment.
-func (c *Controller) Home() {
+func (c *Controller) Home(ctx context.Context, req *v1.Req) (res *v1.Res, err error) {
+	ctx, span := gtrace.NewSpan(ctx, "tracing-controller-comment-home")
+	defer span.End()
 
+	res = &v1.Res{}
+	if res.CommentOutput, err = service.Comment().Home(ctx, req.CommentInput); err != nil {
+		return nil, err
+	}
+	return
 }
 
 // Redirect for comment.
 func (c *Controller) Redirect(ctx context.Context, req *v1.RedirectReq) (res *v1.RedirectRes, err error) {
+	ctx, span := gtrace.NewSpan(ctx, "tracing-controller-comment-Redirect")
+	defer span.End()
+
 	res = &v1.RedirectRes{}
 	if res.RedirectOutput, err = service.Comment().Redirect(ctx, req.RedirectInput); err != nil {
 		return nil, err
@@ -54,6 +65,9 @@ func (c *Controller) Redirect(ctx context.Context, req *v1.RedirectReq) (res *v1
 
 // Counter for comment.
 func (c *Controller) Counter(ctx context.Context, req *v1.CounterReq) (res *v1.CounterRes, err error) {
+	ctx, span := gtrace.NewSpan(ctx, "tracing-controller-comment-Counter")
+	defer span.End()
+
 	res = &v1.CounterRes{}
 	if res.CounterOutput, err = service.Comment().Counter(ctx, req.CounterInput); err != nil {
 		return nil, err

@@ -18,18 +18,25 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
+	"strings"
 
+	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/net/gtrace"
 	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/text/gstr"
 
 	"github.com/houseme/yuncun-leping/app/front/internal/consts"
 	"github.com/houseme/yuncun-leping/app/front/internal/model"
+	"github.com/houseme/yuncun-leping/app/front/internal/service"
 	"github.com/houseme/yuncun-leping/internal/tracing"
+	"github.com/houseme/yuncun-leping/utility/cache"
+	"github.com/houseme/yuncun-leping/utility/helper"
 )
 
 type sMiddleware struct {
@@ -37,7 +44,7 @@ type sMiddleware struct {
 
 // init
 func init() {
-
+	service.RegisterMiddleware(&sMiddleware{})
 }
 
 // Initializer is a middleware handler for ghttp.Request.
@@ -125,4 +132,168 @@ func (s *sMiddleware) HandlerResponse(r *ghttp.Request) {
 		Time:    gtime.TimestampMicro(),
 		TraceID: span.SpanContext().TraceID().String(),
 	})
+}
+
+// middlewareResponse intercept the response
+func (s *sMiddleware) middlewareResponse(r *ghttp.Request, span *gtrace.Span, resp *model.DefaultHandlerResponse) {
+	g.Log(r.GetCtxVar("logger").String()).Debug(r.GetCtx(), "middlewareResponse body resp:", resp)
+	// 设置公共参数
+	tracing.SetAttributes(r, span)
+	r.Response.WriteJson(resp)
+}
+
+// AuthorizationForAPIKey is a middleware handler for ghttp.Request.
+func (s *sMiddleware) AuthorizationForAPIKey(r *ghttp.Request) {
+	if s.authorization(r, consts.AuthTypeDefault) {
+		r.Middleware.Next()
+	}
+	g.Log(r.GetCtxVar("logger").String()).Debug(r.GetCtx(), "AuthorizationForAPIKey authorization failed")
+}
+
+// AuthorizationForPassword is a middleware handler for ghttp.Request.
+func (s *sMiddleware) AuthorizationForPassword(r *ghttp.Request) {
+	if s.authorization(r, consts.AuthTypeAppKey) {
+		g.Log(r.GetCtxVar("logger").String()).Debug(r.GetCtx(), "AuthorizationForPassword authorization success")
+		r.Middleware.Next()
+	}
+	g.Log(r.GetCtxVar("logger").String()).Debug(r.GetCtx(), "AuthorizationForPassword authorization failed")
+}
+
+// authorization is a middleware handler for ghttp.Request.
+func (s *sMiddleware) authorization(r *ghttp.Request, authType uint) bool {
+	ctx, span := gtrace.NewSpan(r.Context(), "tracing-console-service-middleware-authorization")
+	r.SetCtx(ctx)
+	defer span.End()
+
+	var (
+		authHeader = gstr.Trim(r.GetHeader(consts.AuthorizationHeaderKey))
+		logger     = g.Log(r.GetCtxVar("logger").String())
+		resp       = &model.DefaultHandlerResponse{
+			Code:    http.StatusMovedPermanently,
+			Message: http.StatusText(http.StatusMovedPermanently),
+			Data:    nil,
+			Time:    gtime.TimestampMicro(),
+			TraceID: span.SpanContext().TraceID().String(),
+		}
+	)
+	logger.Debug(r.GetCtx(), "authorization authHeader:", authHeader)
+	fields := strings.Fields(authHeader)
+	if len(fields) < 2 {
+		resp.Message = "Invalid authorization Header"
+		s.middlewareResponse(r, span, resp)
+		return false
+	}
+
+	if fields[0] != consts.AuthorizationTypeBearer {
+		resp.Message = "Unsupported authorization Type"
+		s.middlewareResponse(r, span, resp)
+		return false
+	}
+
+	var res, err = validateToken(r.GetCtx(), fields[1], authType)
+	if err != nil {
+		logger.Error(r.GetCtx(), "authorization failed: ", err)
+		resp.Message = "authorization failed reason: " + err.Error()
+		s.middlewareResponse(r, span, resp)
+		return false
+	}
+
+	if res == nil {
+		logger.Debug(r.GetCtx(), "authorization failed")
+		resp.Message = "authorization failed reason"
+		s.middlewareResponse(r, span, resp)
+		return false
+	}
+
+	if res.AuthToken != fields[1] {
+		logger.Debug(r.GetCtx(), "authorization token is Refresh new token:", res.AuthToken)
+		resp.Code = http.StatusFound
+		resp.Message = "token is Refresh"
+		resp.Data = g.Map{
+			"token": res.AuthToken,
+		}
+		s.middlewareResponse(r, span, resp)
+		return false
+	}
+
+	r.SetParam("authAppNo", res.AuthAppNo)
+	r.SetParam("authType", res.AuthType)
+
+	r.SetCtxVar("authAppNo", res.AuthAppNo)
+	r.SetCtxVar("authType", res.AuthType)
+
+	logger.Debug(r.GetCtx(), "authorization success")
+	return true
+}
+
+// validateToken is a middleware handler for ghttp.Request.
+func validateToken(ctx context.Context, token string, authType uint) (*model.AuthorizationToken, error) {
+	ctx, span := gtrace.NewSpan(ctx, "tracing-console-service-middleware-validateToken")
+	defer span.End()
+
+	var (
+		redisKey       = cache.CenterAccessTokenKey(ctx, token)
+		conn, err      = g.Redis(cache.CenterAccessTokenConn(ctx)).Conn(ctx)
+		isAuthPassword = false
+	)
+
+	if err != nil {
+		return nil, gerror.Wrap(err, "validateToken redis conn failed")
+	}
+	defer func() {
+		_ = conn.Close(ctx)
+	}()
+	if authType != consts.AuthTypeDefault {
+		isAuthPassword = true
+		redisKey = cache.CenterAuthorizationKey(ctx, token)
+	}
+	var val *gvar.Var
+	if val, err = conn.Do(ctx, "GET", redisKey); err != nil {
+		return nil, gerror.Wrap(err, "validateToken redis get failed(001)")
+	}
+
+	if val.IsNil() || val.IsEmpty() {
+		return nil, gerror.New("validateToken auth token not found")
+	}
+
+	var authToken *model.AuthorizationToken
+	if err = val.Scan(&authToken); err != nil {
+		return nil, gerror.Wrap(err, "validateToken redis scan failed")
+	}
+
+	if authToken == nil {
+		return nil, gerror.New("validateToken redis get failed(002)")
+	}
+
+	var (
+		authTime = authToken.AuthTime
+		now      = gtime.Now()
+	)
+	// 刷新 token 过期时间
+	if isAuthPassword {
+		if now.Unix()-consts.RefreshTokenExpireTime > authTime {
+			return nil, gerror.New("validateToken auth token expired")
+		}
+		logger := g.Log(helper.Helper().Logger(ctx))
+		authToken.AuthTime = now.Unix()
+		if now.Unix()-consts.PasswordExpireTime > authTime {
+			logger.Debug(ctx, "validateToken auth token password expired 2 hours")
+			if token, err = helper.Helper().CreateAccessToken(ctx, authToken.AuthAppNo); err != nil {
+				return nil, gerror.Wrap(err, "validateToken CreateAccessToken failed")
+			}
+			authToken.AuthToken = token
+			redisKey = cache.CenterAuthorizationKey(ctx, token)
+		}
+		logger.Debug(ctx, "validateToken auth token authTime:", authTime, "now:", now.Unix(), " authToken:", authToken)
+		if val, err = conn.Do(ctx, "SETEX", redisKey, consts.TokenExpireTime, authToken); err != nil {
+			return nil, gerror.Wrap(err, "validateToken redis set failed")
+		}
+		logger.Debug(ctx, "validateToken auth token set redis value:", val)
+		return authToken, nil
+	}
+	if now.Unix()-consts.APIKeyExpireTime > authTime {
+		return nil, gerror.New("validateToken auth token expired")
+	}
+
+	return authToken, nil
 }

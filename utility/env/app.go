@@ -27,7 +27,7 @@ import (
 	"github.com/gogf/gf/v2/net/gtrace"
 )
 
-// New  创建 APP 环境
+// New create an app environment
 func New(ctx context.Context) (*AppEnv, error) {
 	ctx, span := gtrace.NewSpan(ctx, "tracing-utility-env-New")
 	defer span.End()
@@ -50,6 +50,8 @@ func New(ctx context.Context) (*AppEnv, error) {
 		uploadPath:  config["uploadPath"],
 		visitPath:   config["visitPath"],
 		site:        config["site"],
+		webSite:     config["webSite"],
+		lyricSite:   config["lyricSite"],
 	}, nil
 }
 
@@ -64,6 +66,8 @@ type AppEnv struct {
 	uploadPath  string
 	visitPath   string
 	site        string
+	webSite     string
+	lyricSite   string
 }
 
 // Env .
@@ -111,10 +115,20 @@ func (a *AppEnv) Site() string {
 	return a.site
 }
 
+// WebSite .网站地址
+func (a *AppEnv) WebSite() string {
+	return a.webSite
+}
+
+// LyricSite .歌词地址
+func (a *AppEnv) LyricSite() string {
+	return a.lyricSite
+}
+
 // String
 func (a *AppEnv) String() string {
 	return `{"env":"` + a.env + `","environment":"` + a.environment + `","version":"` + a.version +
 		`","endpoint":"` + a.endpoint +
-		`","uploadPath":"` + a.uploadPath + `","visitPath":"` + a.visitPath +
+		`","uploadPath":"` + a.uploadPath + `","visitPath":"` + a.visitPath + `","webSite":"` + a.webSite + `","lyricSite":"` + a.lyricSite +
 		`","site":"` + a.site + `","traceToken":"` + a.traceToken + `"}`
 }
