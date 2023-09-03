@@ -45,7 +45,7 @@ var (
 				return err
 			}
 
-			if _, err = gcron.AddSingleton(ctx, "* * * * * *", func(ctx context.Context) {
+			if _, err = gcron.AddSingleton(ctx, "5 0 0 * * *", func(ctx context.Context) {
 				g.Log().Debug(ctx, `cron job top list running start`)
 				if err = service.Comment().TopList(ctx); err != nil {
 					g.Log().Errorf(ctx, `cron job top list running error: %+v`, err)

@@ -32,27 +32,6 @@ import (
 	"github.com/houseme/yuncun-leping/utility/helper"
 )
 
-func demo() {
-	c := colly.NewCollector()
-
-	// Find and visit all links
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		e.Request.Visit(e.Attr("href"))
-	})
-
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL)
-	})
-
-	c.Visit("http://go-colly.org/")
-}
-
-// SongItem .
-type SongItem struct {
-	ID    string
-	Title string
-}
-
 // GetList .
 func GetList(ctx context.Context, visit string) (list []*domain.SongItem, err error) {
 	logger := g.Log(helper.Helper().Logger(ctx))
@@ -78,13 +57,6 @@ func GetList(ctx context.Context, visit string) (list []*domain.SongItem, err er
 	c.OnResponse(func(r *colly.Response) {
 		logger.Debug(ctx, "Visited", r.Request.URL)
 	})
-
-	// c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-	// 	// if err = e.Request.Visit(e.Attr("href")); err != nil {
-	// 	// 	return
-	// 	// }
-	// 	fmt.Println("Visited id:", e.Attr("href"), " text:", e.Text)
-	// })
 
 	c.OnHTML(".f-hide li", func(e *colly.HTMLElement) {
 		e.ForEach("a[href]", func(_ int, el *colly.HTMLElement) {
