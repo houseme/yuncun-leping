@@ -18,6 +18,7 @@ type Songs struct {
 	Album         string      `json:"album"         description:"相册"`
 	Description   string      `json:"description"   description:"描述"`
 	PublishedDate *gtime.Time `json:"publishedDate" description:"发布时间"`
+	PublishTime   uint64      `json:"publishTime"   description:"发布时间，毫秒级"`
 	CreateTime    *gtime.Time `json:"createTime"    description:"创建时间"`
 	ModifyTime    *gtime.Time `json:"modifyTime"    description:"修改时间"`
 }

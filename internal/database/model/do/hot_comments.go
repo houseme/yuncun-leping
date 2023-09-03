@@ -21,6 +21,7 @@ type HotComments struct {
 	LikedCount    interface{} // 喜欢数
 	Content       interface{} // 内容
 	PublishedDate *gtime.Time // 发布时间
+	PublishTime   interface{} // 发布时间，毫秒级
 	CheckoutDate  *gtime.Time // 获取时间
 	CreateTime    *gtime.Time // 创建时间
 	ModifyTime    *gtime.Time // 更新时间

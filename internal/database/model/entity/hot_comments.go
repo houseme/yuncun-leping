@@ -19,6 +19,7 @@ type HotComments struct {
 	LikedCount    uint        `json:"likedCount"    description:"喜欢数"`
 	Content       string      `json:"content"       description:"内容"`
 	PublishedDate *gtime.Time `json:"publishedDate" description:"发布时间"`
+	PublishTime   uint64      `json:"publishTime"   description:"发布时间，毫秒级"`
 	CheckoutDate  *gtime.Time `json:"checkoutDate"  description:"获取时间"`
 	CreateTime    *gtime.Time `json:"createTime"    description:"创建时间"`
 	ModifyTime    *gtime.Time `json:"modifyTime"    description:"更新时间"`

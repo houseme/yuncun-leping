@@ -1,3 +1,4 @@
 logger:
+  path: "app/schedule/manifest/logs/default"
   level : "all"
-  stdout: true
+  stdout: false

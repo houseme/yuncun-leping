@@ -35,3 +35,8 @@ type CounterInput struct {
 // CounterOutput struct
 type CounterOutput struct {
 }
+
+// SongDetailInput struct
+type SongDetailInput struct {
+	SID string `json:"sid" description:"歌曲 ID"`
+}

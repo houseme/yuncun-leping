@@ -28,6 +28,7 @@ type SongsColumns struct {
 	Album         string // 相册
 	Description   string // 描述
 	PublishedDate string // 发布时间
+	PublishTime   string // 发布时间，毫秒级
 	CreateTime    string // 创建时间
 	ModifyTime    string // 修改时间
 }
@@ -42,6 +43,7 @@ var songsColumns = SongsColumns{
 	Album:         "album",
 	Description:   "description",
 	PublishedDate: "published_date",
+	PublishTime:   "publish_time",
 	CreateTime:    "create_time",
 	ModifyTime:    "modify_time",
 }

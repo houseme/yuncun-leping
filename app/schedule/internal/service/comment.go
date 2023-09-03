@@ -9,12 +9,21 @@ import (
 	"context"
 
 	"github.com/houseme/yuncun-leping/app/schedule/internal/model"
+	"github.com/houseme/yuncun-leping/internal/shared/domain"
 )
 
 type (
 	IComment interface {
 		// QueryOne query one record from table for comment.
 		QueryOne(ctx context.Context, in *model.CommentInput) (out *model.CommentOutput, err error)
+		// QueryCounter query count from table for comment.
+		QueryCounter(ctx context.Context, in *model.CounterInput) (out *model.CounterOutput, err error)
+		// QuerySongDetail query song detail from table for comment.
+		QuerySongDetail(ctx context.Context, in *domain.SongDetailInput) (out *domain.SongDetailOutput, err error)
+		// QuerySongComment query song comment from table for comment.
+		QuerySongComment(ctx context.Context, in *domain.SongCommentInput) (out *domain.SongCommentOutput, err error)
+		// TopList query top list from table for comment.
+		TopList(ctx context.Context) (err error)
 	}
 )
 

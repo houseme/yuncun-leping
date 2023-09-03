@@ -29,6 +29,7 @@ type HotCommentsColumns struct {
 	LikedCount    string // 喜欢数
 	Content       string // 内容
 	PublishedDate string // 发布时间
+	PublishTime   string // 发布时间，毫秒级
 	CheckoutDate  string // 获取时间
 	CreateTime    string // 创建时间
 	ModifyTime    string // 更新时间
@@ -45,6 +46,7 @@ var hotCommentsColumns = HotCommentsColumns{
 	LikedCount:    "liked_count",
 	Content:       "content",
 	PublishedDate: "published_date",
+	PublishTime:   "publish_time",
 	CheckoutDate:  "checkout_date",
 	CreateTime:    "create_time",
 	ModifyTime:    "modify_time",

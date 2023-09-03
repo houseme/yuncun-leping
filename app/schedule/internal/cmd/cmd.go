@@ -27,6 +27,8 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gcron"
 	"github.com/gogf/gf/v2/os/gproc"
+
+	"github.com/houseme/yuncun-leping/app/schedule/internal/service"
 )
 
 var (
@@ -37,12 +39,22 @@ var (
 		Brief: "start crontab job",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			g.Log().Info(ctx, `cron job start`)
-			_, err = gcron.Add(ctx, "* * * * * *", func(ctx context.Context) {
+			if _, err = gcron.Add(ctx, "* * * * * *", func(ctx context.Context) {
 				g.Log().Debug(ctx, `cron job running`)
-			})
-			if err != nil {
+			}); err != nil {
 				return err
 			}
+
+			if _, err = gcron.AddSingleton(ctx, "* * * * * *", func(ctx context.Context) {
+				g.Log().Debug(ctx, `cron job top list running start`)
+				if err = service.Comment().TopList(ctx); err != nil {
+					g.Log().Errorf(ctx, `cron job top list running error: %+v`, err)
+				}
+				g.Log().Debug(ctx, `cron job top list running end`)
+			}); err != nil {
+				return err
+			}
+
 			// Register shutdown handler.
 			gproc.AddSigHandlerShutdown(func(sig os.Signal) {
 				g.Log().Info(ctx, `cron job shutdown`)

@@ -20,6 +20,7 @@ type Songs struct {
 	Album         interface{} // 相册
 	Description   interface{} // 描述
 	PublishedDate *gtime.Time // 发布时间
+	PublishTime   interface{} // 发布时间，毫秒级
 	CreateTime    *gtime.Time // 创建时间
 	ModifyTime    *gtime.Time // 修改时间
 }
