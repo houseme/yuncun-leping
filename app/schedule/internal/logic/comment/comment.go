@@ -62,16 +62,8 @@ func (s *sComment) QueryCounter(ctx context.Context, in *model.CounterInput) (ou
 
 // QuerySongDetail query song detail from table for comment.
 func (s *sComment) QuerySongDetail(ctx context.Context, in *domain.SongDetailInput) (out *domain.SongDetailOutput, err error) {
-	var (
-		traceID = gtrace.GetTraceID(ctx)
-		logger  = g.Log(helper.Helper().Logger(ctx))
-	)
 	ctx, span := gtrace.NewSpan(gctx.GetInitCtx(), "tracing-logic-comment-QuerySongDetail")
 	defer span.End()
-
-	if ctx, err = gtrace.WithTraceID(ctx, traceID); err != nil {
-		return
-	}
 
 	var response *gclient.Response
 	if response, err = g.Client().SetAgent(consts.UserAgent).SetHeader(consts.HeaderAcceptKey, consts.HeaderAcceptValue).Get(ctx, fmt.Sprintf(consts.SongDetail, in.SID)); err != nil {
@@ -81,6 +73,7 @@ func (s *sComment) QuerySongDetail(ctx context.Context, in *domain.SongDetailInp
 	defer func() {
 		_ = response.Close()
 	}()
+	var logger = g.Log(helper.Helper().Logger(ctx))
 	logger.Debug(ctx, "query song detail http Post request result Response \n", response.Raw())
 	var resp *domain.QuerySongResponse
 	if err = gjson.New(response.ReadAll()).Scan(&resp); err != nil {
@@ -132,16 +125,8 @@ func (s *sComment) QuerySongDetail(ctx context.Context, in *domain.SongDetailInp
 
 // QuerySongComment query song comment from table for comment.
 func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentInput) (out *domain.SongCommentOutput, err error) {
-	var (
-		traceID = gtrace.GetTraceID(ctx)
-		logger  = g.Log(helper.Helper().Logger(ctx))
-	)
 	ctx, span := gtrace.NewSpan(gctx.GetInitCtx(), "tracing-logic-comment-QuerySongComment")
 	defer span.End()
-
-	if ctx, err = gtrace.WithTraceID(ctx, traceID); err != nil {
-		return
-	}
 
 	var response *gclient.Response
 	if response, err = g.Client().SetAgent(consts.UserAgent).SetHeader(consts.HeaderAcceptKey, consts.HeaderAcceptValue).Get(ctx, fmt.Sprintf(consts.CommentDetail, in.SID)); err != nil {
@@ -151,6 +136,7 @@ func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentI
 	defer func() {
 		_ = response.Close()
 	}()
+	var logger = g.Log(helper.Helper().Logger(ctx))
 	logger.Debug(ctx, "query song comment http Post request result Response \n", response.Raw())
 	var resp *domain.CommentResponse
 	if err = gjson.New(response.ReadAllString()).Scan(&resp); err != nil {
@@ -310,7 +296,7 @@ func (s *sComment) QuerySong(ctx context.Context, sid string, wg *sync.WaitGroup
 			logger.Errorf(ctx, "cron job async query song detail failed error: %+v", err)
 			return
 		}
-		logger.Debug(ctx, "cron job async song detail: %+v", songDetail)
+		logger.Debug(ctx, "cron job async song detail:", songDetail)
 	}
 	logger.Debugf(ctx, "cron job async song end sid: %s", sid)
 	return
