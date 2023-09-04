@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
@@ -61,18 +62,18 @@ func (s *sComment) QueryCounter(ctx context.Context, in *model.CounterInput) (ou
 
 // QuerySongDetail query song detail from table for comment.
 func (s *sComment) QuerySongDetail(ctx context.Context, in *domain.SongDetailInput) (out *domain.SongDetailOutput, err error) {
-	traceID := gtrace.GetTraceID(ctx)
-	ctx, span := gtrace.NewSpan(ctx, "tracing-logic-comment-QuerySongDetail")
+	var (
+		traceID = gtrace.GetTraceID(ctx)
+		logger  = g.Log(helper.Helper().Logger(ctx))
+	)
+	ctx, span := gtrace.NewSpan(gctx.GetInitCtx(), "tracing-logic-comment-QuerySongDetail")
 	defer span.End()
 
 	if ctx, err = gtrace.WithTraceID(ctx, traceID); err != nil {
 		return
 	}
 
-	var (
-		logger   = g.Log(helper.Helper().Logger(ctx))
-		response *gclient.Response
-	)
+	var response *gclient.Response
 	if response, err = g.Client().SetAgent(consts.UserAgent).SetHeader(consts.HeaderAcceptKey, consts.HeaderAcceptValue).Get(ctx, fmt.Sprintf(consts.SongDetail, in.SID)); err != nil {
 		return
 	}
@@ -81,21 +82,18 @@ func (s *sComment) QuerySongDetail(ctx context.Context, in *domain.SongDetailInp
 		_ = response.Close()
 	}()
 	logger.Debug(ctx, "query song detail http Post request result Response \n", response.Raw())
-	var (
-		content = response.ReadAllString()
-		resp    *domain.QuerySongResponse
-		lastID  int64
-	)
-	logger.Debugf(ctx, "query song detail content: %d", len(content))
-	if err = gjson.New(content).Scan(&resp); err != nil {
+	var resp *domain.QuerySongResponse
+	if err = gjson.New(response.ReadAll()).Scan(&resp); err != nil {
 		return
 	}
 
 	if resp == nil || resp.Code != 200 {
+		logger.Debug(ctx, "query song detail response is empty")
 		return
 	}
 
 	if resp.Songs == nil || len(resp.Songs) < 1 {
+		logger.Debug(ctx, "query song detail songs info is empty")
 		return
 	}
 
@@ -110,11 +108,11 @@ func (s *sComment) QuerySongDetail(ctx context.Context, in *domain.SongDetailInp
 		PublishedDate: gtime.NewFromTimeStamp(resp.Songs[0].Album.PublishTime).Format("Y-m-d H:i:s"),
 	}
 
-	if gstr.Trim(out.Title) == "" || gstr.Trim(out.Author) == "" || gstr.Trim(out.Album) == "" || gstr.Trim(out.Description) == "" {
+	if gstr.Trim(out.Title) == "" || gstr.Trim(out.Author) == "" || gstr.Trim(out.Album) == "" {
 		logger.Debugf(ctx, "query song detail title author album description is empty content: %+v", out)
 		return
 	}
-
+	var lastID int64
 	if lastID, err = dao.Songs.Ctx(ctx).OmitEmpty().Unscoped().InsertAndGetId(do.Songs{
 		SongId:        resp.Songs[0].ID,
 		Title:         resp.Songs[0].Name,
@@ -134,7 +132,10 @@ func (s *sComment) QuerySongDetail(ctx context.Context, in *domain.SongDetailInp
 
 // QuerySongComment query song comment from table for comment.
 func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentInput) (out *domain.SongCommentOutput, err error) {
-	traceID := gtrace.GetTraceID(ctx)
+	var (
+		traceID = gtrace.GetTraceID(ctx)
+		logger  = g.Log(helper.Helper().Logger(ctx))
+	)
 	ctx, span := gtrace.NewSpan(gctx.GetInitCtx(), "tracing-logic-comment-QuerySongComment")
 	defer span.End()
 
@@ -142,10 +143,7 @@ func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentI
 		return
 	}
 
-	var (
-		logger   = g.Log(helper.Helper().Logger(ctx))
-		response *gclient.Response
-	)
+	var response *gclient.Response
 	if response, err = g.Client().SetAgent(consts.UserAgent).SetHeader(consts.HeaderAcceptKey, consts.HeaderAcceptValue).Get(ctx, fmt.Sprintf(consts.CommentDetail, in.SID)); err != nil {
 		return
 	}
@@ -154,49 +152,61 @@ func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentI
 		_ = response.Close()
 	}()
 	logger.Debug(ctx, "query song comment http Post request result Response \n", response.Raw())
-	var (
-		content = response.ReadAllString()
-		resp    *domain.CommentResponse
-		lastID  int64
-	)
-	logger.Debugf(ctx, "query song comment content: %s", content)
-	if err = gjson.New(content).Scan(&resp); err != nil {
+	var resp *domain.CommentResponse
+	if err = gjson.New(response.ReadAllString()).Scan(&resp); err != nil {
 		return
 	}
 
 	if resp == nil || resp.Code != 200 {
+		logger.Debug(ctx, "query song comment response is empty")
 		return
 	}
 
 	if resp.HotComments == nil || len(resp.HotComments) < 1 {
+		logger.Debug(ctx, "query song comment hot comments is empty")
 		return
 	}
-
+	out = &domain.SongCommentOutput{
+		List: []*domain.SongCommentItem{},
+	}
 	for i := 0; i < len(resp.HotComments); i++ {
 		var (
 			commentEntity = (*entity.HotComments)(nil)
 			comment       = resp.HotComments[i]
 		)
-		logger.Debugf(ctx, "query song comment hot comment: %+v", comment)
 		if err = dao.HotComments.Ctx(ctx).Scan(&commentEntity, do.HotComments{CommentId: comment.CommentID}); err != nil {
 			logger.Errorf(ctx, "query song comment failed error: %+v", err)
 			continue
 		}
-		var likedCount = uint(comment.LikedCount)
+		var (
+			likedCount = uint(comment.LikedCount)
+			lastID     int64
+		)
+		out.List = append(out.List, &domain.SongCommentItem{
+			SID:           in.SID,
+			CommentID:     uint64(comment.CommentID),
+			Content:       re.ReplaceAllString(comment.Content, " "),
+			LikedCount:    likedCount,
+			UserID:        uint64(comment.User.UserID),
+			NickName:      comment.User.Nickname,
+			AvatarURL:     comment.User.AvatarURL,
+			PublishedTime: comment.Time,
+			PublishedDate: gtime.NewFromTimeStamp(comment.Time).Format("Y-m-d H:i:s"),
+		})
+
 		if commentEntity != nil {
-			logger.Debugf(ctx, "query song comment entity: %+v", commentEntity)
 			if likedCount != commentEntity.LikedCount {
-				if lastID, err = dao.HotComments.Ctx(ctx).OmitEmpty().Unscoped().Where(do.HotComments{Id: commentEntity.Id}).UpdateAndGetAffected(do.HotComments{
+				if lastID, err = dao.HotComments.Ctx(ctx).OmitEmpty().Unscoped().UpdateAndGetAffected(do.HotComments{
 					LikedCount:    likedCount,
 					PublishTime:   comment.Time,
 					UserId:        comment.User.UserID,
 					Nickname:      comment.User.Nickname,
 					PublishedDate: gtime.NewFromTimeStamp(comment.Time),
-				}); err != nil {
+				}, do.HotComments{Id: commentEntity.Id}); err != nil {
 					logger.Errorf(ctx, "query song comment update failed error: %+v", err)
 					continue
 				}
-				logger.Debugf(ctx, "query song comment entity update lastID: %+v", lastID)
+				logger.Debugf(ctx, "query song comment entity update lastID: %+v", commentEntity.Id)
 			}
 			continue
 		}
@@ -227,10 +237,8 @@ func (s *sComment) TopList(ctx context.Context) (err error) {
 	ctx, span := gtrace.NewSpan(ctx, "tracing-logic-comment-TopList")
 	defer span.End()
 
-	var (
-		logger = g.Log(helper.Helper().Logger(ctx))
-	)
-	logger.Info(ctx, "cron job top list running start")
+	logger := g.Log(helper.Helper().Logger(ctx))
+	logger.Info(ctx, "cron job logic top list running start")
 	list, err := colly.GetList(ctx, consts.TopList)
 	if err != nil {
 		logger.Errorf(ctx, "cron job top list running colly get list failed error: %+v", err)
@@ -240,31 +248,97 @@ func (s *sComment) TopList(ctx context.Context) (err error) {
 		logger.Debug(ctx, "cron job top list colly list is empty")
 		return
 	}
-
+	var wg sync.WaitGroup
 	for i, item := range list {
 		logger.Infof(ctx, "cron job top list colly list ID: %d item: %+v", i, item)
-		var songEntity = (*entity.Songs)(nil)
-		if err = dao.Songs.Ctx(ctx).Scan(&songEntity, do.Songs{SongId: item.SID}); err != nil {
-			logger.Errorf(ctx, "cron job top list running query song failed error: %+v", err)
-			continue
-		}
-
-		if songEntity == nil {
-			var songDetail *domain.SongDetailOutput
-			if songDetail, err = s.QuerySongDetail(ctx, &domain.SongDetailInput{SID: item.SID}); err != nil {
-				logger.Errorf(ctx, "cron job top list running query song detail failed error: %+v", err)
-				continue
-			}
-			logger.Debug(ctx, "cron job top list colly list song detail: %+v", songDetail)
-		}
-
-		var songComment *domain.SongCommentOutput
-		if songComment, err = s.QuerySongComment(ctx, &domain.SongCommentInput{SID: item.SID}); err != nil {
-			logger.Errorf(ctx, "cron job top list running query song comment failed error: %+v", err)
-			continue
-		}
-		logger.Debug(ctx, "cron job top list colly list song comment: %+v", songComment)
+		// var songEntity = (*entity.Songs)(nil)
+		// if err = dao.Songs.Ctx(ctx).Scan(&songEntity, do.Songs{SongId: item.SID}); err != nil {
+		// 	logger.Errorf(ctx, "cron job top list running query song failed error: %+v", err)
+		// 	continue
+		// }
+		//
+		// if songEntity == nil {
+		// 	var songDetail *domain.SongDetailOutput
+		// 	if songDetail, err = s.QuerySongDetail(ctx, &domain.SongDetailInput{SID: item.SID}); err != nil {
+		// 		logger.Errorf(ctx, "cron job top list running query song detail failed error: %+v", err)
+		// 		continue
+		// 	}
+		// 	logger.Debug(ctx, "cron job top list colly list song detail: %+v", songDetail)
+		// }
+		//
+		// var songComment *domain.SongCommentOutput
+		// if songComment, err = s.QuerySongComment(ctx, &domain.SongCommentInput{SID: item.SID}); err != nil {
+		// 	logger.Errorf(ctx, "cron job top list running query song comment failed error: %+v", err)
+		// 	continue
+		// }
+		// logger.Debugf(ctx, "cron job top list colly list song comment: %+v", songComment)
+		go s.QuerySong(ctx, item.SID, &wg)
+		go s.QueryComment(ctx, item.SID, &wg)
 	}
+	wg.Wait()
 	logger.Info(ctx, "cron job top list running end")
+	return
+}
+
+// QuerySong query song from table for comment.
+func (s *sComment) QuerySong(ctx context.Context, sid string, wg *sync.WaitGroup) {
+	wg.Add(1)
+	defer wg.Done()
+	var (
+		traceID = gtrace.GetTraceID(ctx)
+		span    *gtrace.Span
+		err     error
+		logger  = g.Log(helper.Helper().Logger(ctx))
+	)
+	ctx, span = gtrace.NewSpan(gctx.GetInitCtx(), "tracing-logic-comment-QuerySong")
+	span.End()
+
+	if ctx, err = gtrace.WithTraceID(ctx, traceID); err != nil {
+		logger.Errorf(ctx, "cron job async query song failed error: %+v", err)
+		return
+	}
+
+	var songEntity = (*entity.Songs)(nil)
+	if err = dao.Songs.Ctx(ctx).Scan(&songEntity, do.Songs{SongId: sid}); err != nil {
+		logger.Errorf(ctx, "cron job async query song failed error: %+v", err)
+		return
+	}
+
+	if songEntity == nil {
+		var songDetail *domain.SongDetailOutput
+		if songDetail, err = s.QuerySongDetail(ctx, &domain.SongDetailInput{SID: sid}); err != nil {
+			logger.Errorf(ctx, "cron job async query song detail failed error: %+v", err)
+			return
+		}
+		logger.Debug(ctx, "cron job async song detail: %+v", songDetail)
+	}
+	logger.Debugf(ctx, "cron job async song end sid: %s", sid)
+	return
+}
+
+// QueryComment query comment from table for comment.
+func (s *sComment) QueryComment(ctx context.Context, sid string, wg *sync.WaitGroup) {
+	wg.Add(1)
+	defer wg.Done()
+	var (
+		traceID = gtrace.GetTraceID(ctx)
+		span    *gtrace.Span
+		err     error
+		logger  = g.Log(helper.Helper().Logger(ctx))
+	)
+	ctx, span = gtrace.NewSpan(gctx.GetInitCtx(), "tracing-logic-comment-QueryComment")
+	span.End()
+
+	if ctx, err = gtrace.WithTraceID(ctx, traceID); err != nil {
+		logger.Errorf(ctx, "cron job async query comment failed error: %+v", err)
+		return
+	}
+
+	var songComment *domain.SongCommentOutput
+	if songComment, err = s.QuerySongComment(ctx, &domain.SongCommentInput{SID: sid}); err != nil {
+		logger.Errorf(ctx, "cron job async query song comment failed error: %+v", err)
+		return
+	}
+	logger.Debugf(ctx, "cron job async song comment end sid: %s", sid, "hot comment length: %d", len(songComment.List))
 	return
 }

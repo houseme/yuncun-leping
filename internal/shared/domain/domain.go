@@ -61,6 +61,11 @@ type SongCommentInput struct {
 
 // SongCommentOutput struct
 type SongCommentOutput struct {
+	List []*SongCommentItem `json:"list" dc:"歌曲评论列表"`
+}
+
+// SongCommentItem struct
+type SongCommentItem struct {
 	SID           string `json:"sid" dc:"歌曲 ID"`
 	UserID        uint64 `json:"user_id" dc:"用户 ID"`
 	NickName      string `json:"nick_name" dc:"用户昵称"`
