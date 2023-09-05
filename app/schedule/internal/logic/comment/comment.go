@@ -192,7 +192,7 @@ func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentI
 					logger.Errorf(ctx, "query song comment update failed error: %+v", err)
 					continue
 				}
-				logger.Debugf(ctx, "query song comment entity update lastID: %+v", commentEntity.Id)
+				logger.Debugf(ctx, "query song comment entity update lastID: %d", commentEntity.Id)
 			}
 			continue
 		}
@@ -237,27 +237,6 @@ func (s *sComment) TopList(ctx context.Context) (err error) {
 	var wg sync.WaitGroup
 	for i, item := range list {
 		logger.Infof(ctx, "cron job top list colly list ID: %d item: %+v", i, item)
-		// var songEntity = (*entity.Songs)(nil)
-		// if err = dao.Songs.Ctx(ctx).Scan(&songEntity, do.Songs{SongId: item.SID}); err != nil {
-		// 	logger.Errorf(ctx, "cron job top list running query song failed error: %+v", err)
-		// 	continue
-		// }
-		//
-		// if songEntity == nil {
-		// 	var songDetail *domain.SongDetailOutput
-		// 	if songDetail, err = s.QuerySongDetail(ctx, &domain.SongDetailInput{SID: item.SID}); err != nil {
-		// 		logger.Errorf(ctx, "cron job top list running query song detail failed error: %+v", err)
-		// 		continue
-		// 	}
-		// 	logger.Debug(ctx, "cron job top list colly list song detail: %+v", songDetail)
-		// }
-		//
-		// var songComment *domain.SongCommentOutput
-		// if songComment, err = s.QuerySongComment(ctx, &domain.SongCommentInput{SID: item.SID}); err != nil {
-		// 	logger.Errorf(ctx, "cron job top list running query song comment failed error: %+v", err)
-		// 	continue
-		// }
-		// logger.Debugf(ctx, "cron job top list colly list song comment: %+v", songComment)
 		go s.QuerySong(ctx, item.SID, &wg)
 		go s.QueryComment(ctx, item.SID, &wg)
 	}
