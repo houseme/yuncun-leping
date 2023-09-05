@@ -27,6 +27,7 @@ import (
 
 	"github.com/gocolly/colly/v2"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 
 	"github.com/houseme/yuncun-leping/internal/shared/domain"
 	"github.com/houseme/yuncun-leping/utility/helper"
@@ -62,10 +63,10 @@ func GetList(ctx context.Context, visit string) (list []*domain.SongItem, err er
 		e.ForEach("a[href]", func(_ int, el *colly.HTMLElement) {
 			var (
 				href = el.Attr("href")
-				id   string
+				id   uint64
 			)
 			if hrefArr := strings.Split(href, "="); len(hrefArr) > 0 {
-				id = hrefArr[len(hrefArr)-1]
+				id = gconv.Uint64(hrefArr[len(hrefArr)-1])
 			}
 			logger.Debug(ctx, "Visited id: ", el.Attr("href"), " text:", el.Text, " id:", id)
 			list = append(list, &domain.SongItem{

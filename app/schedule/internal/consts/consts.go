@@ -24,10 +24,10 @@ const (
 	TopList = "https://music.163.com/discover/toplist?id=3778678"
 
 	// SongDetail 网易云音乐歌曲详情
-	SongDetail = `https://music.163.com/api/song/detail?ids=[%s]`
+	SongDetail = `https://music.163.com/api/song/detail?ids=[%d]`
 
 	// CommentDetail 网易云音乐歌曲评论
-	CommentDetail = `https://music.163.com/api/v1/resource/comments/R_SO_4_%s?limit=20&offset=0`
+	CommentDetail = `https://music.163.com/api/v1/resource/comments/R_SO_4_%d?limit=20&offset=0`
 
 	// UserAgent .
 	UserAgent = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`

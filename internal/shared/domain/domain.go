@@ -33,18 +33,18 @@ type SongHotOutput struct {
 
 // SongItem .
 type SongItem struct {
-	SID   string `json:"sid" dc:"歌曲 ID"`
+	SID   uint64 `json:"sid,string" dc:"歌曲 ID"`
 	Title string `json:"title" dc:"歌曲标题"`
 }
 
 // SongDetailInput struct
 type SongDetailInput struct {
-	SID string `json:"sid" dc:"歌曲 ID"`
+	SID uint64 `json:"sid,string" dc:"歌曲 ID"`
 }
 
 // SongDetailOutput struct
 type SongDetailOutput struct {
-	SID           string `json:"sid" dc:"歌曲 ID"`
+	SID           uint64 `json:"sid,string" dc:"歌曲 ID"`
 	Title         string `json:"title" dc:"歌曲标题"`
 	Images        string `json:"images" dc:"歌曲图片"`
 	Author        string `json:"author" dc:"歌曲作者"`
@@ -56,7 +56,7 @@ type SongDetailOutput struct {
 
 // SongCommentInput struct
 type SongCommentInput struct {
-	SID string `json:"sid" dc:"歌曲 ID"`
+	SID uint64 `json:"sid,string" dc:"歌曲 ID"`
 }
 
 // SongCommentOutput struct
@@ -66,7 +66,7 @@ type SongCommentOutput struct {
 
 // SongCommentItem struct
 type SongCommentItem struct {
-	SID           string `json:"sid" dc:"歌曲 ID"`
+	SID           uint64 `json:"sid,string" dc:"歌曲 ID"`
 	UserID        uint64 `json:"user_id" dc:"用户 ID"`
 	NickName      string `json:"nick_name" dc:"用户昵称"`
 	AvatarURL     string `json:"avatarURL" dc:"用户头像"`

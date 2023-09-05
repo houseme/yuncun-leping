@@ -22,6 +22,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
@@ -246,7 +247,7 @@ func (s *sComment) TopList(ctx context.Context) (err error) {
 }
 
 // QuerySong query song from table for comment.
-func (s *sComment) QuerySong(ctx context.Context, sid string, wg *sync.WaitGroup) {
+func (s *sComment) QuerySong(ctx context.Context, sid uint64, wg *sync.WaitGroup) {
 	wg.Add(1)
 	defer wg.Done()
 	var (
@@ -278,11 +279,14 @@ func (s *sComment) QuerySong(ctx context.Context, sid string, wg *sync.WaitGroup
 		logger.Debug(ctx, "cron job async song detail:", songDetail)
 	}
 	logger.Debugf(ctx, "cron job async song end sid: %s", sid)
+	if sid%5 == 3 {
+		time.Sleep(1 * time.Second)
+	}
 	return
 }
 
 // QueryComment query comment from table for comment.
-func (s *sComment) QueryComment(ctx context.Context, sid string, wg *sync.WaitGroup) {
+func (s *sComment) QueryComment(ctx context.Context, sid uint64, wg *sync.WaitGroup) {
 	wg.Add(1)
 	defer wg.Done()
 	var (
@@ -305,5 +309,8 @@ func (s *sComment) QueryComment(ctx context.Context, sid string, wg *sync.WaitGr
 		return
 	}
 	logger.Debugf(ctx, "cron job async song comment end sid: %s", sid, "hot comment length: %d", len(songComment.List))
+	if sid%5 == 2 {
+		time.Sleep(1 * time.Second)
+	}
 	return
 }
