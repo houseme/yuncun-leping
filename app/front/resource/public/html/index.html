@@ -217,19 +217,19 @@
             var random = Math.random();
             $('.card-container').addClass('mask');
             $('.card-container').removeClass('shownow');
-            fetch(api_domain+'?random='+random)
+            fetch(api_domain+'api.v1/front/comment?random='+random)
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
-                window.hotComments = data;
+                window.hotComments = data.data;
                 var album = new Image();
-                album.src = data.images+'?param=280y280';
+                album.src = data.data.images+'?param=280y280';
                 album.onload = function () {
                     $('#album-img').attr('src', album.src);
-                    $('#comment-text').text(data.comment_content);
-                    $('#commnet-user').text(data.comment_nickname);
-                    $('#song-name').text(data.title);
+                    $('#comment-text').text(data.data.comment_content);
+                    $('#commnet-user').text(data.data.comment_nickname);
+                    $('#song-name').text(data.data.title);
                     $('.card-container').addClass('shownow');
                     // 获取专辑主色调 取反色设置文字
                     RGBaster.colors(album, {
@@ -257,12 +257,12 @@
 
         function getCount() {
             var random = Math.random();
-            fetch(api_domain+'/count?random='+random)
+            fetch(api_domain+'api.v1/front/counter?random='+random)
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
-                $('#api-request-count').text(data.api_request_count);
+                $('#api-request-count').text(data.data.api_request_count);
             })
             .catch(function (e) {
                 console.log(e)
