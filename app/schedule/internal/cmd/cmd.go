@@ -39,7 +39,7 @@ var (
 		Brief: "start crontab job",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			g.Log().Info(ctx, `cron job start`)
-			if _, err = gcron.Add(ctx, "* * * * * *", func(ctx context.Context) {
+			if _, err = gcron.Add(ctx, "0 * * * * *", func(ctx context.Context) {
 				g.Log().Debug(ctx, `cron job running`)
 			}); err != nil {
 				return err
