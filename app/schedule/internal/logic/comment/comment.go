@@ -61,13 +61,18 @@ func (s *sComment) QueryCounter(ctx context.Context, in *model.CounterInput) (ou
 	return
 }
 
+// initClient init client for comment.
+func (s *sComment) initClient(_ context.Context) *gclient.Client {
+	return g.Client().SetAgent(consts.UserAgent).SetHeader(consts.HeaderAcceptKey, consts.HeaderAcceptValue).SetTimeout(15 * time.Second)
+}
+
 // QuerySongDetail query song detail from table for comment.
 func (s *sComment) QuerySongDetail(ctx context.Context, in *domain.SongDetailInput) (out *domain.SongDetailOutput, err error) {
 	ctx, span := gtrace.NewSpan(gctx.GetInitCtx(), "tracing-logic-comment-QuerySongDetail")
 	defer span.End()
 
 	var response *gclient.Response
-	if response, err = g.Client().SetAgent(consts.UserAgent).SetHeader(consts.HeaderAcceptKey, consts.HeaderAcceptValue).Get(ctx, fmt.Sprintf(consts.SongDetail, in.SID)); err != nil {
+	if response, err = s.initClient(ctx).Get(ctx, fmt.Sprintf(consts.SongDetail, in.SID)); err != nil {
 		return
 	}
 
@@ -130,7 +135,7 @@ func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentI
 	defer span.End()
 
 	var response *gclient.Response
-	if response, err = g.Client().SetAgent(consts.UserAgent).SetHeader(consts.HeaderAcceptKey, consts.HeaderAcceptValue).Get(ctx, fmt.Sprintf(consts.CommentDetail, in.SID)); err != nil {
+	if response, err = s.initClient(ctx).Get(ctx, fmt.Sprintf(consts.CommentDetail, in.SID)); err != nil {
 		return
 	}
 
@@ -140,7 +145,7 @@ func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentI
 	var logger = g.Log(helper.Helper().Logger(ctx))
 	logger.Debug(ctx, "query song comment http Post request result Response \n", response.Raw())
 	var resp *domain.CommentResponse
-	if err = gjson.New(response.ReadAllString()).Scan(&resp); err != nil {
+	if err = gjson.New(response.ReadAll()).Scan(&resp); err != nil {
 		return
 	}
 
@@ -213,9 +218,9 @@ func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentI
 			logger.Errorf(ctx, "query song comment insert failed error: %+v", err)
 			continue
 		}
-		logger.Debugf(ctx, "query song comment entity insert lastID: %+v", lastID)
+		logger.Debugf(ctx, "query song comment entity insert lastID: %d", lastID)
 	}
-	logger.Debugf(ctx, "query song comment entity insert end total: %+v", resp.Total)
+	logger.Debugf(ctx, "query song comment entity insert end total: %d", resp.Total)
 	return
 }
 
@@ -253,12 +258,12 @@ func (s *sComment) QuerySong(ctx context.Context, sid uint64, wg *sync.WaitGroup
 	var (
 		traceID = gtrace.GetTraceID(ctx)
 		span    *gtrace.Span
-		err     error
 		logger  = g.Log(helper.Helper().Logger(ctx))
 	)
 	ctx, span = gtrace.NewSpan(gctx.GetInitCtx(), "tracing-logic-comment-QuerySong")
 	span.End()
 
+	var err error
 	if ctx, err = gtrace.WithTraceID(ctx, traceID); err != nil {
 		logger.Errorf(ctx, "cron job async query song failed error: %+v", err)
 		return
@@ -278,10 +283,7 @@ func (s *sComment) QuerySong(ctx context.Context, sid uint64, wg *sync.WaitGroup
 		}
 		logger.Debug(ctx, "cron job async song detail:", songDetail)
 	}
-	logger.Debugf(ctx, "cron job async song end sid: %s", sid)
-	if sid%5 == 3 {
-		time.Sleep(1 * time.Second)
-	}
+	logger.Debugf(ctx, "cron job async song end sid: %d", sid)
 	return
 }
 
@@ -292,12 +294,11 @@ func (s *sComment) QueryComment(ctx context.Context, sid uint64, wg *sync.WaitGr
 	var (
 		traceID = gtrace.GetTraceID(ctx)
 		span    *gtrace.Span
-		err     error
 		logger  = g.Log(helper.Helper().Logger(ctx))
 	)
 	ctx, span = gtrace.NewSpan(gctx.GetInitCtx(), "tracing-logic-comment-QueryComment")
 	span.End()
-
+	var err error
 	if ctx, err = gtrace.WithTraceID(ctx, traceID); err != nil {
 		logger.Errorf(ctx, "cron job async query comment failed error: %+v", err)
 		return
@@ -308,9 +309,6 @@ func (s *sComment) QueryComment(ctx context.Context, sid uint64, wg *sync.WaitGr
 		logger.Errorf(ctx, "cron job async query song comment failed error: %+v", err)
 		return
 	}
-	logger.Debugf(ctx, "cron job async song comment end sid: %s", sid, "hot comment length: %d", len(songComment.List))
-	if sid%5 == 2 {
-		time.Sleep(1 * time.Second)
-	}
+	logger.Debugf(ctx, "cron job async song comment end sid: %d", sid, "hot comment length: %d", len(songComment.List))
 	return
 }
