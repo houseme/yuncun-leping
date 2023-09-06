@@ -24,12 +24,14 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/gtrace"
+	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 
 	"github.com/houseme/yuncun-leping/app/front/internal/consts"
 	"github.com/houseme/yuncun-leping/app/front/internal/model"
 	"github.com/houseme/yuncun-leping/app/front/internal/service"
 	"github.com/houseme/yuncun-leping/internal/database/dao"
+	"github.com/houseme/yuncun-leping/internal/database/model/do"
 	"github.com/houseme/yuncun-leping/utility/cache"
 	"github.com/houseme/yuncun-leping/utility/env"
 )
@@ -54,12 +56,42 @@ func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model
 	if appEnv, err = env.New(ctx); err != nil {
 		return
 	}
+	var (
+		lastID int64
+		now    = gtime.Now()
+	)
+
+	if lastID, err = dao.RequestLog.Ctx(ctx).OmitEmpty().Unscoped().InsertAndGetId(do.RequestLog{
+		AppNo:       in.AuthAppNo,
+		YearTime:    now.Year(),
+		MonthTime:   now.Month(),
+		DayTime:     now.Day(),
+		UserAgent:   in.UserAgent,
+		Referer:     in.Referer,
+		Path:        in.Path,
+		RequestUri:  in.RequestURI,
+		RequestIp:   in.ClientIP,
+		RequestTime: gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime),
+	}); err != nil {
+		return
+	}
+	g.Log().Debugf(ctx, "home insert request log last id: %d", lastID)
 
 	if out != nil {
 		out.Mp3URL = appEnv.Site() + "/api.v1/front/music/" + gconv.String(out.SongID) + "/" + consts.MusicContentType
 		out.LyricURL = appEnv.Site() + "/api.v1/front/music/" + gconv.String(out.SongID) + "/" + consts.LyricContentType // "https://music.163.com/api/song/media?id=" + gconv.String(out.SongID)
 	}
-	fmt.Println(query)
+	if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterKey(ctx)); err != nil {
+		return
+	}
+	g.Log().Debugf(ctx, "home redis incr request log last id: %d", lastID)
+	if in.AuthAppNo > 0 {
+		if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterByAppKey(ctx, in.AuthAppNo)); err != nil {
+			return
+		}
+		g.Log().Debugf(ctx, "home redis incr request log last id: %d app no: %d", lastID, in.AuthAppNo)
+	}
+
 	return
 }
 
