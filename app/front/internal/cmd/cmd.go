@@ -47,7 +47,7 @@ var (
 					authorize.New(),
 				)
 				group.Group("/api.v1/front", func(group *ghttp.RouterGroup) {
-					// group.Middleware(service.Middleware().AuthorizationForPassword)
+					group.Middleware(service.Middleware().RequestLog)
 					group.Bind(
 						comment.New(),
 					)

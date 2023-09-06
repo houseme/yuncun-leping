@@ -297,3 +297,15 @@ func validateToken(ctx context.Context, token string, authType uint) (*model.Aut
 
 	return authToken, nil
 }
+
+// RequestLog is a middleware handler for ghttp.Request.
+func (s *sMiddleware) RequestLog(r *ghttp.Request) {
+	r.SetParam("clientIP", r.GetClientIp())
+	r.SetParam("userAgent", r.UserAgent())
+	r.SetParam("referer", r.Referer())
+	r.SetParam("path", r.URL.Path)
+	r.SetParam("requestURI", r.RequestURI)
+	r.SetParam("header", r.Header)
+	r.SetParam("origin", r.GetHeader("Origin"))
+	r.Middleware.Next()
+}

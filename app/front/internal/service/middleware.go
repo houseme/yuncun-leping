@@ -25,6 +25,8 @@ type (
 		AuthorizationForAPIKey(r *ghttp.Request)
 		// AuthorizationForPassword is a middleware handler for ghttp.Request.
 		AuthorizationForPassword(r *ghttp.Request)
+		// RequestLog is a middleware handler for ghttp.Request.
+		RequestLog(r *ghttp.Request)
 	}
 )
 
