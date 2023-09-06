@@ -43,10 +43,10 @@ var (
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(service.Middleware().Initializer, service.Middleware().ClientIP, service.Middleware().Logger, service.Middleware().HandlerResponse)
 				// group.Middleware(ghttp.MiddlewareHandlerResponse)
-				group.Bind(
-					authorize.New(),
-				)
 				group.Group("/api.v1/front", func(group *ghttp.RouterGroup) {
+					group.Bind(
+						authorize.New(),
+					)
 					group.Middleware(service.Middleware().RequestLog)
 					group.Bind(
 						comment.New(),

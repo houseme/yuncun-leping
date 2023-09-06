@@ -28,9 +28,9 @@ type CommentInput struct {
 	*AuthBase  `json:"-"`
 	ClientIP   string      `json:"clientIp" description:"客户端 IP" v:"required|ipv4#客户端 IP 不能为空 | 客户端 IP 格式不正确"`
 	UserAgent  string      `json:"userAgent" description:"客户端 UserAgent" v:"required#客户端 UserAgent 不能为空"`
-	Referer    string      `json:"referer" description:"客户端 Referer" v:"required#客户端 Referer 不能为空"`
-	Path       string      `json:"path" description:"客户端 Path" v:"required#客户端 Path 不能为空"`
-	RequestURI string      `json:"requestURI" description:"客户端 RequestURI" v:"required#客户端 RequestURI 不能为空"`
+	Referer    string      `json:"referer" description:"客户端 Referer"`
+	Path       string      `json:"path" description:"客户端 Path"`
+	RequestURI string      `json:"requestURI" description:"客户端 RequestURI"`
 	Header     http.Header `json:"header" description:"客户端 Header" v:"required#客户端 Header 不能为空"`
 }
 
