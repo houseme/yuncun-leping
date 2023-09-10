@@ -47,7 +47,7 @@ func GetList(ctx context.Context, visit string) (list []*domain.SongItem, err er
 		colly.AllowedDomains("music.163.com"),
 		colly.AllowURLRevisit(),
 	)
-	c.SetRequestTimeout(30 * time.Second)
+	c.SetRequestTimeout(120 * time.Second)
 	c.OnRequest(func(r *colly.Request) {
 		logger.Debug(ctx, "Visiting", r.URL)
 	})
