@@ -37,16 +37,25 @@ import (
 func GetList(ctx context.Context, visit string) (list []*domain.SongItem, err error) {
 	logger := g.Log(helper.Helper().Logger(ctx))
 	c := colly.NewCollector(
-		colly.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36`),
+		colly.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36`),
 		colly.Headers(
 			map[string]string{
-				"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+				"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
 			}),
 		colly.MaxDepth(1),
 		colly.Async(true),
 		colly.AllowedDomains("music.163.com"),
 		colly.AllowURLRevisit(),
 	)
+	c.Headers.Set("Referer", "https://music.163.com/")
+	c.Headers.Set("Sec-Ch-Ua", `Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"`)
+	c.Headers.Set("Sec-Ch-Ua-Mobile", "?0")
+	c.Headers.Set("Sec-Ch-Ua-Platform", "macOS")
+	c.Headers.Set("Sec-Fetch-Dest", "iframe")
+	c.Headers.Set("Sec-Fetch-Mode", "navigate")
+	c.Headers.Set("Sec-Fetch-Site", "same-origin")
+	c.Headers.Set("Sec-Fetch-User", "?1")
+	c.Headers.Set("Upgrade-Insecure-Requests", "1")
 	c.SetRequestTimeout(120 * time.Second)
 	c.OnRequest(func(r *colly.Request) {
 		logger.Debug(ctx, "Visiting", r.URL)
