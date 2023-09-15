@@ -309,6 +309,6 @@ func (s *sComment) QueryComment(ctx context.Context, sid uint64, wg *sync.WaitGr
 		logger.Errorf(ctx, "cron job async query song comment failed error: %+v", err)
 		return
 	}
-	logger.Debugf(ctx, "cron job async song comment end sid: %d", sid, "hot comment length: %d", len(songComment.List))
+	logger.Debugf(ctx, "cron job async song comment end sid: %d hot comment length: %d", sid, len(songComment.List))
 	return
 }
