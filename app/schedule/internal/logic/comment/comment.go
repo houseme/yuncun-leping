@@ -194,6 +194,7 @@ func (s *sComment) QuerySongComment(ctx context.Context, in *domain.SongCommentI
 					UserId:        comment.User.UserID,
 					Nickname:      comment.User.Nickname,
 					PublishedDate: gtime.NewFromTimeStamp(comment.Time),
+					ModifyTime:    gtime.Now(),
 				}, do.HotComments{Id: commentEntity.Id}); err != nil {
 					logger.Errorf(ctx, "query song comment update failed error: %+v", err)
 					continue
