@@ -42,6 +42,9 @@ var (
 			s.SetRewrite("/favicon.ico", "/resource/image/favicon.ico")
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(ghttp.MiddlewareCORS, service.Middleware().Initializer, service.Middleware().ClientIP, service.Middleware().Logger, service.Middleware().HandlerResponse)
+
+				group.ALL("/", comment.New().Compatible)
+
 				group.Group("/api.v1/front", func(group *ghttp.RouterGroup) {
 					group.Bind(
 						authorize.New(),
