@@ -49,7 +49,7 @@ type RedirectRes struct {
 
 // CounterReq counter req
 type CounterReq struct {
-	g.Meta `path:"/counter" tags:"Comment" method:"get" summary:"music counter"`
+	g.Meta `path:"/count" tags:"Comment" method:"get" summary:"music counter"`
 	*model.CounterInput
 }
 
