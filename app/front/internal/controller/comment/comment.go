@@ -46,8 +46,8 @@ func (c *Controller) Compatible(r *ghttp.Request) {
 	r.SetCtx(ctx)
 	defer span.End()
 
-	g.Log().Debug(r.GetCtx(), "comment home logic params userAgent: ", r.UserAgent(), " clientIP: ", r.GetClientIp(), " referer: ", r.Referer(), " path: ", r.URL.Path, " requestURI: ", r.RequestURI, " header: ", r.Header)
-	out, err := service.Comment().Home(ctx, &model.CommentInput{
+	g.Log().Debug(r.GetCtx(), "comment home controller params userAgent: ", r.UserAgent(), " clientIP: ", r.GetClientIp(), " referer: ", r.Referer(), " path: ", r.URL.Path, " requestURI: ", r.RequestURI, " header: ", r.Header)
+	out, err := service.Comment().Home(r.GetCtx(), &model.CommentInput{
 		ClientIP:   r.GetClientIp(),
 		UserAgent:  r.UserAgent(),
 		Referer:    r.Referer(),
@@ -57,7 +57,7 @@ func (c *Controller) Compatible(r *ghttp.Request) {
 	})
 
 	if err != nil {
-		g.Log().Error(r.GetCtx(), "comment home logic failed err:", err)
+		g.Log().Error(r.GetCtx(), "controller comment home failed err:", err)
 		r.Response.WriteStatusExit(503, "系统繁忙，请稍后重试")
 	}
 	g.Log().Debug(r.GetCtx(), "comment home logic success out:", out)
