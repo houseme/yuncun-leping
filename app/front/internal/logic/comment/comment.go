@@ -52,10 +52,6 @@ func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model
 		return
 	}
 
-	var appEnv *env.AppEnv
-	if appEnv, err = env.New(ctx); err != nil {
-		return
-	}
 	var (
 		now    = gtime.Now()
 		lastID int64
@@ -78,8 +74,12 @@ func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model
 	g.Log().Debugf(ctx, "home insert request log last id: %d", lastID)
 
 	if out != nil {
-		out.Mp3URL = appEnv.Site() + "/api.v1/front/music/" + gconv.String(out.SongID) + "/" + consts.MusicContentType
-		out.LyricURL = appEnv.Site() + "/api.v1/front/music/" + gconv.String(out.SongID) + "/" + consts.LyricContentType // "https://music.163.com/api/song/media?id=" + gconv.String(out.SongID)
+		var appEnv *env.AppEnv
+		if appEnv, err = env.New(ctx); err != nil {
+			return
+		}
+		out.Mp3URL = appEnv.Site() + "api.v1/front/music/" + gconv.String(out.SongID) + "/" + consts.MusicContentType
+		out.LyricURL = appEnv.Site() + "api.v1/front/music/" + gconv.String(out.SongID) + "/" + consts.LyricContentType // "https://music.163.com/api/song/media?id=" + gconv.String(out.SongID)
 	}
 	if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterKey(ctx)); err != nil {
 		return
