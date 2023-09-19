@@ -23,9 +23,11 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/net/gtrace"
 
 	v1 "github.com/houseme/yuncun-leping/app/front/api/comment/v1"
+	"github.com/houseme/yuncun-leping/app/front/internal/model"
 	"github.com/houseme/yuncun-leping/app/front/internal/service"
 )
 
@@ -36,6 +38,27 @@ type Controller struct {
 // New comment controller.
 func New() *Controller {
 	return &Controller{}
+}
+
+// Compatible .compatible with history interfaces
+func (c *Controller) Compatible(r *ghttp.Request) {
+	ctx, span := gtrace.NewSpan(r.GetCtx(), "tracing-controller-comment-home")
+	r.SetCtx(ctx)
+	defer span.End()
+
+	out, err := service.Comment().Home(ctx, &model.CommentInput{
+		ClientIP:   r.GetClientIp(),
+		UserAgent:  r.UserAgent(),
+		Referer:    r.Referer(),
+		Path:       r.URL.Path,
+		RequestURI: r.RequestURI,
+		Header:     r.Header,
+	})
+	if err != nil {
+		g.Log().Error(r.GetCtx(), "comment home logic failed err:", err)
+		r.Response.WriteStatusExit(503, "系统繁忙，请稍后重试")
+	}
+	r.Response.WriteJsonExit(out)
 }
 
 // Home for comment.
