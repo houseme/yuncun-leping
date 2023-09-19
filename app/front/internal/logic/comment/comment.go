@@ -59,10 +59,16 @@ func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model
 		return
 	}
 	var (
-		lastID int64
-		now    = gtime.Now()
+		lastID    int64
+		now       = gtime.Now()
+		enterTime = now
 	)
 
+	if g.RequestFromCtx(ctx) != nil {
+		enterTime = gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime)
+	}
+
+	g.Log().Debugf(ctx, "home insert request log start enterTime: %s", enterTime.String())
 	if lastID, err = dao.RequestLog.Ctx(ctx).OmitEmpty().Unscoped().InsertAndGetId(do.RequestLog{
 		AppNo:       in.AuthAppNo,
 		YearTime:    now.Year(),
@@ -73,7 +79,7 @@ func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model
 		Path:        in.Path,
 		RequestUri:  in.RequestURI,
 		RequestIp:   in.ClientIP,
-		RequestTime: gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime),
+		RequestTime: enterTime,
 	}); err != nil {
 		return
 	}
