@@ -46,7 +46,6 @@ func (c *Controller) Compatible(r *ghttp.Request) {
 	r.SetCtx(ctx)
 	defer span.End()
 
-	g.Log().Debug(r.GetCtx(), "comment home controller params userAgent: ", r.UserAgent(), " clientIP: ", r.GetClientIp(), " referer: ", r.Referer(), " path: ", r.URL.Path, " requestURI: ", r.RequestURI, " header: ", r.Header)
 	out, err := service.Comment().Home(r.GetCtx(), &model.CommentInput{
 		ClientIP:   r.GetClientIp(),
 		UserAgent:  r.UserAgent(),
@@ -54,6 +53,9 @@ func (c *Controller) Compatible(r *ghttp.Request) {
 		Path:       r.URL.Path,
 		RequestURI: r.RequestURI,
 		Header:     r.Header,
+		AuthBase: &model.AuthBase{
+			AuthAppNo: 0,
+		},
 	})
 
 	if err != nil {

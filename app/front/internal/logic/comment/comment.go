@@ -47,8 +47,6 @@ func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model
 	ctx, span := gtrace.NewSpan(ctx, "tracing-controller-logic-Home")
 	defer span.End()
 
-	g.Log().Debug(ctx, "comment home logic params userAgent: ", in)
-
 	var query = `SELECT t3.song_id,t3.title, t3.images, t3.author, t3.album, t3.description, '' as 'mp3_url',t3.published_date as publish_date,t1.comment_id,t1.user_id AS comment_user_id,t1.nickname AS comment_nickname,t1.avatar_url AS comment_avatar,t1.liked_count AS comment_liked_count,t1.content AS comment_content,t1.published_date AS comment_published_date FROM hot_comments t1 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(id) FROM hot_comments) - ( SELECT MIN(id) FROM hot_comments )) + (SELECT MIN(id) FROM hot_comments )) AS id ) t2 JOIN songs t3 ON t1.song_id = t3.song_id WHERE t1.id = t2.id LIMIT 1;`
 	if err = g.DB().GetScan(ctx, &out, query); err != nil {
 		return
@@ -59,16 +57,10 @@ func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model
 		return
 	}
 	var (
-		lastID    int64
-		now       = gtime.Now()
-		enterTime = now
+		now    = gtime.Now()
+		lastID int64
 	)
 
-	if g.RequestFromCtx(ctx) != nil {
-		enterTime = gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime)
-	}
-
-	g.Log().Debugf(ctx, "home insert request log start enterTime: %s", enterTime.String())
 	if lastID, err = dao.RequestLog.Ctx(ctx).OmitEmpty().Unscoped().InsertAndGetId(do.RequestLog{
 		AppNo:       in.AuthAppNo,
 		YearTime:    now.Year(),
@@ -79,7 +71,7 @@ func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model
 		Path:        in.Path,
 		RequestUri:  in.RequestURI,
 		RequestIp:   in.ClientIP,
-		RequestTime: enterTime,
+		RequestTime: gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime),
 	}); err != nil {
 		return
 	}
