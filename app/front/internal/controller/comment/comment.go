@@ -54,10 +54,12 @@ func (c *Controller) Compatible(r *ghttp.Request) {
 		RequestURI: r.RequestURI,
 		Header:     r.Header,
 	})
+	g.Log().Debug(r.GetCtx(), "comment home logic params userAgent: ", r.UserAgent(), " clientIP: ", r.GetClientIp(), " referer: ", r.Referer(), " path: ", r.URL.Path, " requestURI: ", r.RequestURI, " header: ", r.Header)
 	if err != nil {
 		g.Log().Error(r.GetCtx(), "comment home logic failed err:", err)
 		r.Response.WriteStatusExit(503, "系统繁忙，请稍后重试")
 	}
+	g.Log().Debug(r.GetCtx(), "comment home logic success out:", out)
 	r.Response.WriteJsonExit(out)
 }
 
