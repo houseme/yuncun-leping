@@ -21,6 +21,7 @@ package tracing
 
 import (
 	"context"
+	"time"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/gipv4"
@@ -45,7 +46,7 @@ const (
 //
 // The output parameter `Shutdown` is used for waiting exported tracing spans to be uploaded,
 // which is useful if your program is ending, and you do not want to lose recent spans.
-func InitOtlpGrpc(serviceName, endpoint, traceToken, version, environment string) (*trace.TracerProvider, error) {
+func InitOtlpGrpc(serviceName, endpoint, traceToken, version, environment string) (func(ctx context.Context), error) {
 	// Try retrieving host ip for tracing info.
 	var (
 		intranetIPArray, err = gipv4.GetIntranetIpArray()
@@ -104,16 +105,26 @@ func InitOtlpGrpc(serviceName, endpoint, traceToken, version, environment string
 	otel.SetTextMapPropagator(propagation.TraceContext{})
 	otel.SetTracerProvider(tracerProvider)
 
-	return tracerProvider, nil
+	return func(ctx context.Context) {
+		// Shutdown flushes any remaining spans and shuts down the exporter.
+		ctx, cancel := context.WithTimeout(ctx, time.Second)
+		defer cancel()
+		if err = traceExp.Shutdown(ctx); err != nil {
+			g.Log().Errorf(ctx, "Shutdown traceExp failed err:%+v", err)
+			otel.Handle(err)
+		}
+		g.Log().Debug(ctx, "Shutdown traceExp success")
+	}, nil
 }
 
 // InitTracer initializes and registers jaeger to global TracerProvider.
-func InitTracer(ctx context.Context, serviceName string) {
+func InitTracer(ctx context.Context, serviceName string) (shutdown func(ctx context.Context)) {
 	if appEnv, err := env.New(ctx); err != nil {
 		g.Log().Fatal(ctx, "InitTracer env new failed err:", err)
 	} else {
-		if _, err = InitOtlpGrpc(serviceName, appEnv.Endpoint(), appEnv.TraceToken(), appEnv.Version(), appEnv.Environment()); err != nil {
+		if shutdown, err = InitOtlpGrpc(serviceName, appEnv.Endpoint(), appEnv.TraceToken(), appEnv.Version(), appEnv.Environment()); err != nil {
 			g.Log().Fatal(ctx, "InitTracer InitOtlpGrpc failed err:", err)
 		}
 	}
+	return
 }
