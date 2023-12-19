@@ -3,11 +3,11 @@ module github.com/houseme/yuncun-leping
 go 1.20
 
 require (
-	github.com/btcsuite/btcd/btcutil v1.1.3
+	github.com/btcsuite/btcd/btcutil v1.1.4
 	github.com/gocolly/colly/v2 v2.1.1-0.20230620150846-a6e3d81fe6b7
-	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.7
-	github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.7
-	github.com/gogf/gf/v2 v2.5.7
+	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.6.0
+	github.com/gogf/gf/contrib/nosql/redis/v2 v2.6.0
+	github.com/gogf/gf/v2 v2.6.0
 	github.com/houseme/gocrypto v1.2.1
 	github.com/houseme/snowflake v1.6.5
 	go.opentelemetry.io/otel v1.21.0
@@ -15,8 +15,8 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.21.0
 	go.opentelemetry.io/otel/sdk v1.21.0
 	go.opentelemetry.io/otel/trace v1.21.0
-	golang.org/x/crypto v0.16.0
-	google.golang.org/grpc v1.60.0
+	golang.org/x/crypto v0.17.0
+	google.golang.org/grpc v1.60.1
 )
 
 require (
@@ -60,8 +60,8 @@ require (
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20231211222908-989df2bf70f3 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20231211222908-989df2bf70f3 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20231212172506-995d672761c0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20231212172506-995d672761c0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
