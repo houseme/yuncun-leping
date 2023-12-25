@@ -34,6 +34,7 @@ import (
 	"github.com/houseme/yuncun-leping/internal/database/model/do"
 	"github.com/houseme/yuncun-leping/utility/cache"
 	"github.com/houseme/yuncun-leping/utility/env"
+	"github.com/houseme/yuncun-leping/utility/helper"
 )
 
 type sComment struct{}
@@ -47,7 +48,11 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 	ctx, span := gtrace.NewSpan(ctx, "tracing-controller-logic-Home")
 	defer span.End()
 
-	var query = `SELECT t3.song_id,t3.title, t3.images, t3.author, t3.album, t3.description, '' as 'mp3_url',t3.published_date as publish_date,t1.comment_id,t1.user_id AS comment_user_id,t1.nickname AS comment_nickname,t1.avatar_url AS comment_avatar,t1.liked_count AS comment_liked_count,t1.content AS comment_content,t1.published_date AS comment_published_date FROM hot_comments t1 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(id) FROM hot_comments) - ( SELECT MIN(id) FROM hot_comments )) + (SELECT MIN(id) FROM hot_comments )) AS id ) t2 JOIN songs t3 ON t1.song_id = t3.song_id WHERE t1.id = t2.id LIMIT 1;`
+	var (
+		query  = `SELECT t3.song_id,t3.title, t3.images, t3.author, t3.album, t3.description, '' as 'mp3_url',t3.published_date as publish_date,t1.comment_id,t1.user_id AS comment_user_id,t1.nickname AS comment_nickname,t1.avatar_url AS comment_avatar,t1.liked_count AS comment_liked_count,t1.content AS comment_content,t1.published_date AS comment_published_date FROM hot_comments t1 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(id) FROM hot_comments) - ( SELECT MIN(id) FROM hot_comments )) + (SELECT MIN(id) FROM hot_comments )) AS id ) t2 JOIN songs t3 ON t1.song_id = t3.song_id WHERE t1.id = t2.id LIMIT 1;`
+		logger = g.Log(helper.Helper().Logger(ctx))
+	)
+	logger.Debug(ctx, "comment home logic start params:", in)
 	if err = g.DB().GetScan(ctx, &out, query); err != nil {
 		return
 	}
@@ -56,7 +61,10 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 		now    = gtime.Now()
 		lastID int64
 	)
-
+	if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterKey(ctx)); err != nil {
+		return
+	}
+	logger.Debugf(ctx, "home Redis incr request log last id: %d", lastID)
 	if lastID, err = dao.RequestLog.Ctx(ctx).OmitEmpty().Unscoped().InsertAndGetId(do.RequestLog{
 		AppNo:       in.AuthAppNo,
 		YearTime:    now.Year(),
@@ -71,7 +79,7 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 	}); err != nil {
 		return
 	}
-	g.Log().Debugf(ctx, "home insert request log last id: %d", lastID)
+	logger.Debugf(ctx, "home insert request log last id: %d", lastID)
 
 	if out != nil {
 		var appEnv *env.AppEnv
@@ -79,19 +87,17 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 			return
 		}
 		out.Mp3URL = appEnv.Site() + "api.v1/front/music/" + gconv.String(out.SongID) + "/" + consts.MusicContentType
-		out.LyricURL = appEnv.Site() + "api.v1/front/music/" + gconv.String(out.SongID) + "/" + consts.LyricContentType // "https://music.163.com/api/song/media?id=" + gconv.String(out.SongID)
+		// "https://music.163.com/api/song/media?id=" + gconv.String(out.SongID)
+		out.LyricURL = appEnv.Site() + "api.v1/front/music/" + gconv.String(out.SongID) + "/" + consts.LyricContentType
 	}
-	if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterKey(ctx)); err != nil {
-		return
-	}
-	g.Log().Debugf(ctx, "home Redis incr request log last id: %d", lastID)
+
 	if in.AuthAppNo > 0 {
 		if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterByAppKey(ctx, in.AuthAppNo)); err != nil {
 			return
 		}
-		g.Log().Debugf(ctx, "home Redis incr request log last id: %d app no: %d", lastID, in.AuthAppNo)
+		logger.Debugf(ctx, "home Redis incr request log last id: %d app no: %d", lastID, in.AuthAppNo)
 	}
-
+	logger.Debug(ctx, "comment home logic success out:", out)
 	return
 }
 

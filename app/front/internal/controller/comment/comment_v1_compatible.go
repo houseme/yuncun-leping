@@ -62,7 +62,7 @@ func (c *ControllerV1) Compatible(ctx context.Context, req *v1.CompatibleReq) (r
 	req.AuthBase = &model.AuthBase{
 		AuthAppNo: 0,
 	}
-
+	res = &v1.CompatibleRes{}
 	if res.HomeOutput, err = service.Comment().Home(ctx, req.HomeInput); err != nil {
 		logger.Errorf(r.GetCtx(), "controller comment home failed err:%+v", err)
 		r.Response.WriteStatusExit(503, "系统繁忙，请稍后重试")
