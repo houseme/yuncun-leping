@@ -20,8 +20,8 @@
 package consts
 
 const (
-	// DefaultLoggerName .
-	DefaultLoggerName = ""
+	// DefaultLogger .
+	DefaultLogger = ""
 
 	// AuthorizationHeaderKey 授权头
 	AuthorizationHeaderKey = "authorization"

@@ -67,17 +67,17 @@ func CounterKey(_ context.Context) string {
 	return counterKey
 }
 
-// CenterAccessTokenConn returns the redis connection
+// CenterAccessTokenConn returns the Redis connection
 func CenterAccessTokenConn(_ context.Context) string {
 	return centerAccessTokenConn
 }
 
-// CenterAccessTokenKey returns the redis access token key
+// CenterAccessTokenKey returns the Redis access token key
 func CenterAccessTokenKey(_ context.Context, accessToken string) string {
 	return centerAccessTokenKey + accessToken
 }
 
-// CenterAuthorizationKey returns the redis authorization key
+// CenterAuthorizationKey returns the Redis authorization key
 func CenterAuthorizationKey(_ context.Context, authorization string) string {
 	return centerAuthorizationKey + authorization
 }

@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
@@ -49,13 +50,14 @@ func init() {
 
 // Initializer is a middleware handler for ghttp.Request.
 func (s *sMiddleware) Initializer(r *ghttp.Request) {
-	r.SetCtxVar("logger", consts.DefaultLoggerName)
+	r.SetCtxVar("logger", consts.DefaultLogger)
 	r.Middleware.Next()
 }
 
 // ClientIP sets the client ip to the context.
 func (s *sMiddleware) ClientIP(r *ghttp.Request) {
 	r.SetParam("clientIP", r.GetClientIp())
+	r.SetParam("userAgent", r.UserAgent())
 	r.Middleware.Next()
 }
 
@@ -227,18 +229,18 @@ func (s *sMiddleware) authorization(r *ghttp.Request, authType uint) bool {
 }
 
 // validateToken is a middleware handler for ghttp.Request.
-func validateToken(ctx context.Context, token string, authType uint) (*model.AuthorizationToken, error) {
+func validateToken(ctx context.Context, token string, authType uint) (authToken *model.AuthorizationToken, err error) {
 	ctx, span := gtrace.NewSpan(ctx, "tracing-console-service-middleware-validateToken")
 	defer span.End()
 
 	var (
 		redisKey       = cache.CenterAccessTokenKey(ctx, token)
-		conn, err      = g.Redis(cache.CenterAccessTokenConn(ctx)).Conn(ctx)
+		conn           gredis.Conn
 		isAuthPassword = false
 	)
 
-	if err != nil {
-		return nil, gerror.Wrap(err, "validateToken redis conn failed")
+	if conn, err = g.Redis(cache.CenterAccessTokenConn(ctx)).Conn(ctx); err != nil {
+		return nil, gerror.Wrap(err, "validateToken Redis conn failed")
 	}
 	defer func() {
 		_ = conn.Close(ctx)
@@ -249,20 +251,19 @@ func validateToken(ctx context.Context, token string, authType uint) (*model.Aut
 	}
 	var val *gvar.Var
 	if val, err = conn.Do(ctx, "GET", redisKey); err != nil {
-		return nil, gerror.Wrap(err, "validateToken redis get failed(001)")
+		return nil, gerror.Wrap(err, "validateToken Redis get failed(001)")
 	}
 
 	if val.IsNil() || val.IsEmpty() {
 		return nil, gerror.New("validateToken auth token not found")
 	}
 
-	var authToken *model.AuthorizationToken
 	if err = val.Scan(&authToken); err != nil {
-		return nil, gerror.Wrap(err, "validateToken redis scan failed")
+		return nil, gerror.Wrap(err, "validateToken Redis scan failed")
 	}
 
 	if authToken == nil {
-		return nil, gerror.New("validateToken redis get failed(002)")
+		return nil, gerror.New("validateToken Redis get failed(002)")
 	}
 
 	var (
@@ -286,9 +287,9 @@ func validateToken(ctx context.Context, token string, authType uint) (*model.Aut
 		}
 		logger.Debug(ctx, "validateToken auth token authTime:", authTime, "now:", now.Unix(), " authToken:", authToken)
 		if val, err = conn.Do(ctx, "SETEX", redisKey, consts.TokenExpireTime, authToken); err != nil {
-			return nil, gerror.Wrap(err, "validateToken redis set failed")
+			return nil, gerror.Wrap(err, "validateToken Redis set failed")
 		}
-		logger.Debug(ctx, "validateToken auth token set redis value:", val)
+		logger.Debug(ctx, "validateToken auth token set Redis value:", val)
 		return authToken, nil
 	}
 	if now.Unix()-consts.APIKeyExpireTime > authTime {
@@ -300,8 +301,6 @@ func validateToken(ctx context.Context, token string, authType uint) (*model.Aut
 
 // RequestLog is a middleware handler for ghttp.Request.
 func (s *sMiddleware) RequestLog(r *ghttp.Request) {
-	r.SetParam("clientIP", r.GetClientIp())
-	r.SetParam("userAgent", r.UserAgent())
 	r.SetParam("referer", r.Referer())
 	r.SetParam("path", r.URL.Path)
 	r.SetParam("requestURI", r.RequestURI)

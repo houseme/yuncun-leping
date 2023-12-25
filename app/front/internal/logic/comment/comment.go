@@ -43,7 +43,7 @@ func init() {
 }
 
 // Home query one record from table for comment.
-func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model.CommentOutput, err error) {
+func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.HomeOutput, err error) {
 	ctx, span := gtrace.NewSpan(ctx, "tracing-controller-logic-Home")
 	defer span.End()
 
@@ -84,12 +84,12 @@ func (s *sComment) Home(ctx context.Context, in *model.CommentInput) (out *model
 	if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterKey(ctx)); err != nil {
 		return
 	}
-	g.Log().Debugf(ctx, "home redis incr request log last id: %d", lastID)
+	g.Log().Debugf(ctx, "home Redis incr request log last id: %d", lastID)
 	if in.AuthAppNo > 0 {
 		if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterByAppKey(ctx, in.AuthAppNo)); err != nil {
 			return
 		}
-		g.Log().Debugf(ctx, "home redis incr request log last id: %d app no: %d", lastID, in.AuthAppNo)
+		g.Log().Debugf(ctx, "home Redis incr request log last id: %d app no: %d", lastID, in.AuthAppNo)
 	}
 
 	return

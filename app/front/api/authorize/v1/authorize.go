@@ -25,13 +25,13 @@ import (
 	"github.com/houseme/yuncun-leping/app/front/internal/model"
 )
 
-// Req .
-type Req struct {
+// AuthorizeReq .
+type AuthorizeReq struct {
 	g.Meta `path:"/authorize" tags:"Authorize" method:"Post" summary:"authorize token"`
 	*model.AuthorizeInput
 }
 
-// Res .
-type Res struct {
+// AuthorizeRes .
+type AuthorizeRes struct {
 	*model.AuthorizeOutput
 }

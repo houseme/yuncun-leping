@@ -19,25 +19,3 @@
 
 // Package authorize for authorize.
 package authorize
-
-import (
-	"context"
-
-	"github.com/gogf/gf/v2/frame/g"
-
-	v1 "github.com/houseme/yuncun-leping/app/front/api/authorize/v1"
-)
-
-// Controller struct
-type Controller struct{}
-
-// New Controller
-func New() *Controller {
-	return &Controller{}
-}
-
-// Authorization say authorize
-func (c *Controller) Authorization(ctx context.Context, req *v1.Req) (res *v1.Res, err error) {
-	g.RequestFromCtx(ctx).Response.Writeln("Hello World!")
-	return
-}

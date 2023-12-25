@@ -25,15 +25,15 @@ import (
 	"github.com/houseme/yuncun-leping/app/front/internal/model"
 )
 
-// Req struct
-type Req struct {
+// HomeReq struct
+type HomeReq struct {
 	g.Meta `path:"/comment" tags:"Comment" method:"get" summary:"music comment"`
-	*model.CommentInput
+	*model.HomeInput
 }
 
-// Res struct
-type Res struct {
-	*model.CommentOutput
+// HomeRes struct
+type HomeRes struct {
+	*model.HomeOutput
 }
 
 // RedirectReq redirect req
@@ -56,4 +56,15 @@ type CounterReq struct {
 // CounterRes counter res
 type CounterRes struct {
 	*model.CounterOutput
+}
+
+// CompatibleReq compatible req
+type CompatibleReq struct {
+	g.Meta `path:"/" tags:"Comment" method:"get" summary:"music compatible"`
+	*model.HomeInput
+}
+
+// CompatibleRes compatible res
+type CompatibleRes struct {
+	*model.HomeOutput
 }

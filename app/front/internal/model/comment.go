@@ -23,8 +23,8 @@ import (
 	"net/http"
 )
 
-// CommentInput struct
-type CommentInput struct {
+// HomeInput struct
+type HomeInput struct {
 	*AuthBase  `json:"-"`
 	ClientIP   string      `json:"clientIp" description:"客户端 IP" v:"required|ipv4#客户端 IP 不能为空 | 客户端 IP 格式不正确"`
 	UserAgent  string      `json:"userAgent" description:"客户端 UserAgent" v:"required#客户端 UserAgent 不能为空"`
@@ -34,8 +34,8 @@ type CommentInput struct {
 	Header     http.Header `json:"header" description:"客户端 Header" v:"required#客户端 Header 不能为空"`
 }
 
-// CommentOutput struct
-type CommentOutput struct {
+// HomeOutput struct
+type HomeOutput struct {
 	SongID               int64  `json:"song_id" description:"歌曲 ID"`
 	Title                string `json:"title" description:"歌曲标题"`
 	Images               string `json:"images" description:"歌曲封面"`
