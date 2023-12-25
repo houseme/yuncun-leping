@@ -40,7 +40,7 @@ func (c *ControllerV1) Compatible(ctx context.Context, req *v1.CompatibleReq) (r
 		r      = g.RequestFromCtx(ctx)
 		logger = g.Log(helper.Helper().Logger(ctx))
 	)
-	logger.Debug(r.GetCtx(), "comment home logic start params:", req)
+	logger.Debug(r.GetCtx(), "comment Compatible controller start params:", req)
 	if req.ClientIP == "" {
 		req.ClientIP = r.GetClientIp()
 	}
