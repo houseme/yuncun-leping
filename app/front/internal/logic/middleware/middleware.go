@@ -75,8 +75,9 @@ func (s *sMiddleware) Logger(r *ghttp.Request) {
 	errStr := "success"
 	if err := r.GetError(); err != nil {
 		errStr = err.Error()
+		g.Log(r.GetCtxVar("logger").String()).Errorf(r.GetCtx(), "Server logger Error:%+v", err)
 	}
-	g.Log(r.GetCtxVar("logger").String()).Info(r.GetCtx(), "status: ", r.Response.Status, "path: ", r.URL.Path, "msg: ", errStr)
+	g.Log(r.GetCtxVar("logger").String()).Debug(r.GetCtx(), "status: ", r.Response.Status, "path: ", r.URL.Path, "msg: ", errStr)
 }
 
 // HandlerResponse is a middleware handler for ghttp.Request.
