@@ -85,7 +85,7 @@ func Helper() *UtilHelper {
 type UtilHelper struct {
 }
 
-// UserAgent is a default http userAgent
+// UserAgent is a default HTTP userAgent
 func (h *UtilHelper) UserAgent(_ context.Context) string {
 	return headerUserAgent
 }
@@ -274,7 +274,7 @@ func (h *UtilHelper) RequestTime(_ context.Context, ts string) *gtime.Time {
 	return gtime.NewFromStrFormat(ts, "YmdHis")
 }
 
-// ConcatenateSignSource get sign url 排序并拼接签名的内容信息
+// ConcatenateSignSource get sign URL 排序并拼接签名的内容信息
 func (h *UtilHelper) ConcatenateSignSource(ctx context.Context, data interface{}) string {
 	ctx, span := gtrace.NewSpan(ctx, "tracing-enterprise-utility-ConcatenateSignSource")
 	defer span.End()

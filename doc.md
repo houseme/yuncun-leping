@@ -17,16 +17,16 @@
 | ---------- | --- |
 | song_id | 歌曲 ID |
 | title | 歌曲名称 |
-| images | 歌曲封面图片，已处理为 https 链接 |
+| images | 歌曲封面图片，已处理为 HTTPS 链接 |
 | author | 歌曲作者 |
 | album | 歌曲所属专辑 |
 | description | 歌曲描述 |
-| mp3_url | 歌曲资源链接，已处理为 https 链接 |
+| mp3_url | 歌曲资源链接，已处理为 HTTPS 链接 |
 | pub_date | 歌曲发行时间 |
 | comment_id | 评论 ID |
 | comment_user_id | 评论所属用户 ID |
 | comment_nickname | 评论所属用户名称 |
-| comment_avatar_url | 评论所属用户头像链接，已处理为 https 链接 |
+| comment_avatar_url | 评论所属用户头像链接，已处理为 HTTPS 链接 |
 | comment_content | 评论正文 |
 | comment_pub_date | 评论发表日期 |
 
