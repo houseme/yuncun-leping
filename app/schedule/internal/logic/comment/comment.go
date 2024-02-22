@@ -63,7 +63,7 @@ func (s *sComment) QueryCounter(ctx context.Context, in *model.CounterInput) (ou
 
 // initClient init client for comment.
 func (s *sComment) initClient(_ context.Context) *gclient.Client {
-	return g.Client().SetAgent(consts.UserAgent).SetHeader(consts.HeaderAcceptKey, consts.HeaderAcceptValue).SetTimeout(15 * time.Second)
+	return g.Client().SetAgent(consts.UserAgent).SetHeader(consts.HeaderAcceptKey, consts.HeaderAcceptValue).SetTimeout(35 * time.Second)
 }
 
 // QuerySongDetail query song detail from table for comment.

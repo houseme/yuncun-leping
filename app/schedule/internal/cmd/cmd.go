@@ -27,6 +27,7 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gcron"
 	"github.com/gogf/gf/v2/os/gproc"
+	"github.com/gogf/gf/v2/os/gtime"
 
 	"github.com/houseme/yuncun-leping/app/schedule/internal/service"
 )
@@ -40,7 +41,9 @@ var (
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			g.Log().Info(ctx, `cron job start`)
 			if _, err = gcron.Add(ctx, "0 * * * * *", func(ctx context.Context) {
-				g.Log().Debug(ctx, `cron job running`)
+				if gtime.Now().Timestamp()%100 == 1 {
+					g.Log().Debug(ctx, `cron job running `)
+				}
 			}); err != nil {
 				return err
 			}
