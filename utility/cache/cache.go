@@ -34,6 +34,11 @@ const (
 	// noExpiration means the cache items have no expiration time.
 	noExpiration = 0
 
+	counterConn = "counter"
+
+	// defaultCounter
+	defaultCounter = "laravel_database_counter"
+
 	// counter key
 	counterKey = "yc:counter"
 
@@ -85,4 +90,19 @@ func CenterAuthorizationKey(_ context.Context, authorization string) string {
 // CounterByAppKey returns the counter key of cache item.
 func CounterByAppKey(_ context.Context, appKey uint64) string {
 	return counterKey + ":" + gconv.String(appKey)
+}
+
+// CounterConn returns the counter connection of cache.
+func CounterConn(_ context.Context) string {
+	return counterConn
+}
+
+// DefaultCounterKey returns the default counter of cache.
+func DefaultCounterKey(_ context.Context) string {
+	return defaultCounter
+}
+
+// DefaultCounterByAppKey returns the default counter of cache.
+func DefaultCounterByAppKey(_ context.Context, appKey uint64) string {
+	return defaultCounter + ":" + gconv.String(appKey)
 }

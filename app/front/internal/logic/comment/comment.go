@@ -61,7 +61,7 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 		now    = gtime.Now()
 		lastID int64
 	)
-	if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterKey(ctx)); err != nil {
+	if lastID, err = g.Redis(cache.CounterConn(ctx)).Incr(ctx, cache.DefaultCounterKey(ctx)); err != nil {
 		return
 	}
 	logger.Debugf(ctx, "home Redis incr request log last id: %d", lastID)
@@ -92,7 +92,7 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 	}
 
 	if in.AuthAppNo > 0 {
-		if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.CounterByAppKey(ctx, in.AuthAppNo)); err != nil {
+		if lastID, err = g.Redis(cache.DefaultConn(ctx)).Incr(ctx, cache.DefaultCounterByAppKey(ctx, in.AuthAppNo)); err != nil {
 			return
 		}
 		logger.Debugf(ctx, "home Redis incr request log last id: %d app no: %d", lastID, in.AuthAppNo)
@@ -120,12 +120,12 @@ func (s *sComment) Counter(ctx context.Context, in *model.CounterInput) (out *mo
 
 	var (
 		value    *gvar.Var
-		redisKey = cache.CounterKey(ctx)
+		redisKey = cache.DefaultCounterKey(ctx)
 	)
 	if in.AuthAppNo > 0 {
-		redisKey = cache.CounterByAppKey(ctx, in.AuthAppNo)
+		redisKey = cache.DefaultCounterByAppKey(ctx, in.AuthAppNo)
 	}
-	if value, err = g.Redis(cache.DefaultConn(ctx)).Get(ctx, redisKey); err != nil {
+	if value, err = g.Redis(cache.CounterConn(ctx)).Get(ctx, redisKey); err != nil {
 		return
 	}
 	if value != nil && !value.IsNil() && !value.IsEmpty() {
