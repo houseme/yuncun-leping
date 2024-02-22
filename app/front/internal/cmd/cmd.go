@@ -44,6 +44,7 @@ var (
 				group.Middleware(ghttp.MiddlewareCORS, service.Middleware().Initializer, service.Middleware().ClientIP, service.Middleware().Logger, service.Middleware().HandlerResponse)
 
 				group.ALL("/", comment.NewV1().Compatible)
+				group.GET("/count", comment.NewV1().CompatibleCount)
 				group.Group("/api.v1/front", func(group *ghttp.RouterGroup) {
 					group.Bind(
 						authorize.NewV1(),

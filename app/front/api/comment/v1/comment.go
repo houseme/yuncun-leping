@@ -68,3 +68,14 @@ type CompatibleReq struct {
 type CompatibleRes struct {
 	*model.HomeOutput
 }
+
+// CompatibleCountReq compatible req
+type CompatibleCountReq struct {
+	g.Meta `path:"/count" tags:"Comment" method:"get" summary:"music compatible counter"`
+	*model.CounterInput
+}
+
+// CompatibleCountRes compatible res
+type CompatibleCountRes struct {
+	*model.CounterOutput
+}

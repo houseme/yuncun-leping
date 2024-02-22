@@ -15,4 +15,5 @@ type ICommentV1 interface {
 	Redirect(ctx context.Context, req *v1.RedirectReq) (res *v1.RedirectRes, err error)
 	Counter(ctx context.Context, req *v1.CounterReq) (res *v1.CounterRes, err error)
 	Compatible(ctx context.Context, req *v1.CompatibleReq) (res *v1.CompatibleRes, err error)
+	CompatibleCount(ctx context.Context, req *v1.CompatibleCountReq) (res *v1.CompatibleCountRes, err error)
 }
