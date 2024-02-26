@@ -9,10 +9,10 @@ gfcli:
         descriptionTag: true
         noModelComment: true
         withTime: false
-        tables: "hot_comments,songs,app_info,request_log"
+        tables: "hot_comments,songs,app_info,request_log,response_log"
         group: "default"
         overwriteDao: true
-        clear: true
+        # clear: true
         path: "internal/database"
         typeMapping:
           decimal:
