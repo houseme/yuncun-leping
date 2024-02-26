@@ -78,6 +78,7 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 			DayTime:     now.Day(),
 			UserAgent:   in.UserAgent,
 			Referer:     in.Referer,
+			Origin:      in.Origin,
 			Path:        in.Path,
 			RequestUri:  in.RequestURI,
 			RequestIp:   in.ClientIP,

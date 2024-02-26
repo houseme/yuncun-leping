@@ -29,6 +29,7 @@ type HomeInput struct {
 	ClientIP   string      `json:"clientIp" description:"客户端 IP" v:"required|ipv4#客户端 IP 不能为空 | 客户端 IP 格式不正确"`
 	UserAgent  string      `json:"userAgent" description:"客户端 UserAgent" v:"required#客户端 UserAgent 不能为空"`
 	Referer    string      `json:"referer" description:"客户端 Referer"`
+	Origin     string      `json:"origin" description:"客户端 Origin"`
 	Path       string      `json:"path" description:"客户端 Path"`
 	RequestURI string      `json:"requestURI" description:"客户端 RequestURI"`
 	Header     http.Header `json:"header" description:"客户端 Header" v:"required#客户端 Header 不能为空"`

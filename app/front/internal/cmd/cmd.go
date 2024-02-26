@@ -41,7 +41,7 @@ var (
 			s := g.Server()
 			s.SetRewrite("/favicon.ico", "/resource/image/favicon.ico")
 			s.Group("/", func(group *ghttp.RouterGroup) {
-				group.Middleware(ghttp.MiddlewareCORS, service.Middleware().Initializer, service.Middleware().ClientIP, service.Middleware().Logger, service.Middleware().HandlerResponse)
+				group.Middleware(ghttp.MiddlewareCORS, service.Middleware().Initializer, service.Middleware().ClientIP, service.Middleware().RequestLog, service.Middleware().Logger, service.Middleware().HandlerResponse)
 
 				group.ALL("/", comment.NewV1().Compatible)
 				group.GET("/count", comment.NewV1().CompatibleCount)
@@ -49,7 +49,6 @@ var (
 					group.Bind(
 						authorize.NewV1(),
 					)
-					group.Middleware(service.Middleware().RequestLog)
 					group.Bind(
 						comment.NewV1(),
 					)

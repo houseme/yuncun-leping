@@ -50,6 +50,11 @@ func (c *ControllerV1) Compatible(ctx context.Context, req *v1.CompatibleReq) (r
 	if req.Referer == "" {
 		req.Referer = r.Referer()
 	}
+
+	if req.Origin == "" {
+		req.Origin = r.GetHeader("Origin")
+	}
+
 	if req.Path == "" {
 		req.Path = r.URL.Path
 	}
