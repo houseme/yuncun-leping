@@ -25,6 +25,7 @@ type ResponseLogColumns struct {
 	YearTime          string // 年份
 	MonthTime         string // 月份
 	DayTime           string // 日期
+	RequestId         string // 对应的请求 ID
 	RequestIp         string // 请求 IP
 	RequestTime       string // 请求时间
 	ResponseTime      string // 响应时间
@@ -46,6 +47,7 @@ var responseLogColumns = ResponseLogColumns{
 	YearTime:          "year_time",
 	MonthTime:         "month_time",
 	DayTime:           "day_time",
+	RequestId:         "request_id",
 	RequestIp:         "request_ip",
 	RequestTime:       "request_time",
 	ResponseTime:      "response_time",

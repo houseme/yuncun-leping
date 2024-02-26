@@ -13,6 +13,7 @@ import (
 type RequestLog struct {
 	g.Meta      `orm:"table:request_log, do:true"`
 	Id          interface{} // ID
+	RequestId   interface{} // 请求唯一标识
 	AppNo       interface{} // 应用 ID
 	YearTime    interface{} // 年份
 	MonthTime   interface{} // 月份

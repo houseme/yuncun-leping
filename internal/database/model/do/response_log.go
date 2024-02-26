@@ -17,6 +17,7 @@ type ResponseLog struct {
 	YearTime          interface{} // 年份
 	MonthTime         interface{} // 月份
 	DayTime           interface{} // 日期
+	RequestId         interface{} // 对应的请求 ID
 	RequestIp         interface{} // 请求 IP
 	RequestTime       *gtime.Time // 请求时间
 	ResponseTime      *gtime.Time // 响应时间

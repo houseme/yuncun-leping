@@ -15,6 +15,7 @@ type ResponseLog struct {
 	YearTime          uint        `json:"yearTime"          description:"年份"`
 	MonthTime         uint        `json:"monthTime"         description:"月份"`
 	DayTime           uint        `json:"dayTime"           description:"日期"`
+	RequestId         uint64      `json:"requestId"         description:"对应的请求 ID"`
 	RequestIp         string      `json:"requestIp"         description:"请求 IP"`
 	RequestTime       *gtime.Time `json:"requestTime"       description:"请求时间"`
 	ResponseTime      *gtime.Time `json:"responseTime"      description:"响应时间"`

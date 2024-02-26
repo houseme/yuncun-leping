@@ -69,7 +69,9 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 	logger.Debugf(ctx, "home Redis incr request log last id: %d", lastID)
 	counterValue = lastID
 	if err = g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
+		var requestID = helper.Helper().InitTrxID(ctx, in.AuthAppNo)
 		if lastID, err = dao.RequestLog.Ctx(ctx).TX(tx).OmitEmpty().Unscoped().InsertAndGetId(do.RequestLog{
+			RequestId:   requestID,
 			AppNo:       in.AuthAppNo,
 			YearTime:    now.Year(),
 			MonthTime:   now.Month(),
@@ -85,6 +87,7 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 		}
 		logger.Debugf(ctx, "home insert request log last id: %d", lastID)
 		var data = do.ResponseLog{
+			RequestId:    requestID,
 			AppNo:        in.AuthAppNo,
 			YearTime:     now.Year(),
 			MonthTime:    now.Month(),
@@ -106,7 +109,7 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 		if lastID, err = dao.ResponseLog.Ctx(ctx).TX(tx).OmitEmpty().Unscoped().InsertAndGetId(data); err != nil {
 			return err
 		}
-		logger.Debug(ctx, "home insert response log last id: %d", lastID)
+		logger.Debugf(ctx, "home insert response log last id: %d,requestID: %d", lastID, requestID)
 		return nil
 	}); err != nil {
 		return

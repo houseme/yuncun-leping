@@ -11,6 +11,7 @@ import (
 // RequestLog is the golang structure for table request_log.
 type RequestLog struct {
 	Id          uint64      `json:"id"          description:"ID"`
+	RequestId   uint64      `json:"requestId"   description:"请求唯一标识"`
 	AppNo       uint64      `json:"appNo"       description:"应用 ID"`
 	YearTime    uint        `json:"yearTime"    description:"年份"`
 	MonthTime   uint        `json:"monthTime"   description:"月份"`

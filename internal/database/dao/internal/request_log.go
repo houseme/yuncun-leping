@@ -21,6 +21,7 @@ type RequestLogDao struct {
 // RequestLogColumns defines and stores column names for table request_log.
 type RequestLogColumns struct {
 	Id          string // ID
+	RequestId   string // 请求唯一标识
 	AppNo       string // 应用 ID
 	YearTime    string // 年份
 	MonthTime   string // 月份
@@ -39,6 +40,7 @@ type RequestLogColumns struct {
 // requestLogColumns holds the columns for table request_log.
 var requestLogColumns = RequestLogColumns{
 	Id:          "id",
+	RequestId:   "request_id",
 	AppNo:       "app_no",
 	YearTime:    "year_time",
 	MonthTime:   "month_time",
