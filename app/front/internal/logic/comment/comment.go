@@ -22,6 +22,7 @@ import (
 	"fmt"
 
 	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/gtrace"
 	"github.com/gogf/gf/v2/os/gtime"
@@ -58,28 +59,58 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 	}
 
 	var (
-		now    = gtime.Now()
-		lastID int64
+		now          = gtime.Now()
+		lastID       int64
+		counterValue int64
 	)
 	if lastID, err = g.Redis(cache.CounterConn(ctx)).Incr(ctx, cache.DefaultCounterKey(ctx)); err != nil {
 		return
 	}
 	logger.Debugf(ctx, "home Redis incr request log last id: %d", lastID)
-	if lastID, err = dao.RequestLog.Ctx(ctx).OmitEmpty().Unscoped().InsertAndGetId(do.RequestLog{
-		AppNo:       in.AuthAppNo,
-		YearTime:    now.Year(),
-		MonthTime:   now.Month(),
-		DayTime:     now.Day(),
-		UserAgent:   in.UserAgent,
-		Referer:     in.Referer,
-		Path:        in.Path,
-		RequestUri:  in.RequestURI,
-		RequestIp:   in.ClientIP,
-		RequestTime: gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime),
+	counterValue = lastID
+	if err = g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
+		if lastID, err = dao.RequestLog.Ctx(ctx).TX(tx).OmitEmpty().Unscoped().InsertAndGetId(do.RequestLog{
+			AppNo:       in.AuthAppNo,
+			YearTime:    now.Year(),
+			MonthTime:   now.Month(),
+			DayTime:     now.Day(),
+			UserAgent:   in.UserAgent,
+			Referer:     in.Referer,
+			Path:        in.Path,
+			RequestUri:  in.RequestURI,
+			RequestIp:   in.ClientIP,
+			RequestTime: gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime),
+		}); err != nil {
+			return err
+		}
+		logger.Debugf(ctx, "home insert request log last id: %d", lastID)
+		var data = do.ResponseLog{
+			AppNo:        in.AuthAppNo,
+			YearTime:     now.Year(),
+			MonthTime:    now.Month(),
+			DayTime:      now.Day(),
+			RequestIp:    in.ClientIP,
+			RequestTime:  gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime),
+			ResponseTime: gtime.Now(),
+			CounterValue: counterValue,
+		}
+
+		if out != nil {
+			data.SongId = out.SongID
+			data.CommentId = out.CommentID
+			data.CommentUserId = out.CommentUserID
+			data.CommentLikedCount = out.CommentLikedCount
+			data.Title = out.Title
+			data.CommentContent = out.CommentContent
+		}
+		if lastID, err = dao.ResponseLog.Ctx(ctx).TX(tx).OmitEmpty().Unscoped().InsertAndGetId(data); err != nil {
+			return err
+		}
+		logger.Debug(ctx, "home insert response log last id: %d", lastID)
+		return nil
 	}); err != nil {
 		return
 	}
-	logger.Debugf(ctx, "home insert request log last id: %d", lastID)
 
 	if out != nil {
 		var appEnv *env.AppEnv
