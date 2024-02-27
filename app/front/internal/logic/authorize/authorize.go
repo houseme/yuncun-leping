@@ -22,8 +22,12 @@ package authorize
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/gtrace"
+
 	"github.com/houseme/yuncun-leping/app/front/internal/model"
 	"github.com/houseme/yuncun-leping/app/front/internal/service"
+	"github.com/houseme/yuncun-leping/utility/helper"
 )
 
 type sAuthorize struct {
@@ -34,7 +38,15 @@ func init() {
 	service.RegisterAuthorize(&sAuthorize{})
 }
 
-// Authorization .
-func Authorization(ctx context.Context, in *model.AuthorizeInput) (out *model.AuthorizeOutput, err error) {
+// Authorization app authorization
+func (s *sAuthorize) Authorization(ctx context.Context, in *model.AuthorizeInput) (out *model.AuthorizeOutput, err error) {
+	ctx, span := gtrace.NewSpan(ctx, "tracing-logic-authorize-Authorization")
+	defer span.End()
+
+	var (
+		logger = g.Log(helper.Helper().Logger(ctx))
+	)
+	logger.Debug(ctx, "authorize logic start params:", in)
+
 	return
 }

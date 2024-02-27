@@ -5,8 +5,17 @@
 
 package service
 
+import (
+	"context"
+
+	"github.com/houseme/yuncun-leping/app/front/internal/model"
+)
+
 type (
-	IAuthorize interface{}
+	IAuthorize interface {
+		// Authorization app authorization
+		Authorization(ctx context.Context, in *model.AuthorizeInput) (out *model.AuthorizeOutput, err error)
+	}
 )
 
 var (
