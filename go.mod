@@ -5,9 +5,9 @@ go 1.22
 require (
 	github.com/btcsuite/btcd/btcutil v1.1.5
 	github.com/gocolly/colly/v2 v2.1.1-0.20230620150846-a6e3d81fe6b7
-	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.6.3
-	github.com/gogf/gf/contrib/nosql/redis/v2 v2.6.3
-	github.com/gogf/gf/v2 v2.6.3
+	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.6.4
+	github.com/gogf/gf/contrib/nosql/redis/v2 v2.6.4
+	github.com/gogf/gf/v2 v2.6.4
 	github.com/houseme/gocrypto v1.2.1
 	github.com/houseme/snowflake v1.6.5
 	go.opentelemetry.io/otel v1.24.0
@@ -38,7 +38,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/grokify/html-strip-tags-go v0.1.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1 // indirect
