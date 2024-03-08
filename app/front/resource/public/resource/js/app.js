@@ -32,6 +32,7 @@ const options = {
     headers: headers,
     mode: 'cors',
     // credentials: 'omit',
+    redirect: 'follow',
     cache: 'default'
 };
 var api_domain = `https://api.comments.haoda.me/api.v1/front/comment?${params}`;
