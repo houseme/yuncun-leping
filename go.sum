@@ -91,8 +91,8 @@ github.com/gogf/gf/contrib/drivers/mysql/v2 v2.6.4 h1:ScG3YcYMDEP/UrwNtwQPt2noyS
 github.com/gogf/gf/contrib/drivers/mysql/v2 v2.6.4/go.mod h1:oFFE9u1zHkxVXk7ZkNipXQR9JFyDZDiixZy243ywhfQ=
 github.com/gogf/gf/contrib/nosql/redis/v2 v2.6.4 h1:43517FF//GKgGpb4pxHl3NWLxW/inTAQ7rUFnfUIoYY=
 github.com/gogf/gf/contrib/nosql/redis/v2 v2.6.4/go.mod h1:9qNdKgqB+tHC9XczIoMzfSHmWkphQMXqxJXF6g9Icr4=
-github.com/gogf/gf/v2 v2.6.4 h1:w7HXdH9mcTsn/aE13CkaDbRArmAL1KS3FuQqDi6u74Y=
-github.com/gogf/gf/v2 v2.6.4/go.mod h1:x2XONYcI4hRQ/4gMNbWHmZrNzSEIg20s2NULbzom5k0=
+github.com/gogf/gf/v2 v2.7.0 h1:CjxhbMiE7oqf6K8ZtGuKt3dQEwK4vL6LhiI+dI7tJGU=
+github.com/gogf/gf/v2 v2.7.0/go.mod h1:Qu8nimKt9aupJQcdUL85tWF4Mfxocz97zUt8UC4abVI=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
 github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da h1:oI5xCqsCo564l8iNU+DwB5epxmsaqB+rhGL0m5jtYqE=
