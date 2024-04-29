@@ -82,7 +82,7 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 			Path:        in.Path,
 			RequestUri:  in.RequestURI,
 			RequestIp:   in.ClientIP,
-			RequestTime: gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime),
+			RequestTime: g.RequestFromCtx(ctx).EnterTime,
 		}); err != nil {
 			return err
 		}
@@ -94,7 +94,7 @@ func (s *sComment) Home(ctx context.Context, in *model.HomeInput) (out *model.Ho
 			MonthTime:    now.Month(),
 			DayTime:      now.Day(),
 			RequestIp:    in.ClientIP,
-			RequestTime:  gtime.NewFromTimeStamp(g.RequestFromCtx(ctx).EnterTime),
+			RequestTime:  g.RequestFromCtx(ctx).EnterTime,
 			ResponseTime: gtime.Now(),
 			CounterValue: counterValue,
 		}
