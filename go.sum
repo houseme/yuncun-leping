@@ -93,10 +93,10 @@ github.com/gocolly/colly/v2 v2.1.1-0.20230620150846-a6e3d81fe6b7 h1:P6YEJ9LErLTW
 github.com/gocolly/colly/v2 v2.1.1-0.20230620150846-a6e3d81fe6b7/go.mod h1:+3ubospV5oXJSO/ihl2uGGL4cBR+tyrf2znNcYJGWwM=
 github.com/gogf/gf/contrib/drivers/mysql/v2 v2.8.2 h1:thK4DZT0irDrnhIxkap5JqBuBIJaXQ0IMvlIzuRGgVQ=
 github.com/gogf/gf/contrib/drivers/mysql/v2 v2.8.2/go.mod h1:Vg7XaiwsQ27YmpDqzwCQ+yt10KntTvcP9iOoFL5DF40=
-github.com/gogf/gf/contrib/nosql/redis/v2 v2.8.2 h1:w8EfQgPvKfLBvS1rEFJfirixCRJYiSauOYlrjCZ2Y/Q=
-github.com/gogf/gf/contrib/nosql/redis/v2 v2.8.2/go.mod h1:9oQtAMrDDbVIWSSb9NTMAywpZ1cqtywgpzwbHk0lvxM=
-github.com/gogf/gf/v2 v2.8.2 h1:4k641rn+hV1COAKygqsqcTm8+lDTkcO8HQ4iBv/uTFs=
-github.com/gogf/gf/v2 v2.8.2/go.mod h1:n++xPYGUUMadw6IygLEgGZqc6y6DRLrJKg5kqCrPLWY=
+github.com/gogf/gf/contrib/nosql/redis/v2 v2.8.3 h1:SpstyaADpaJmTgv55Teb8i7mpQrKH9IMzL0TwnhGcHI=
+github.com/gogf/gf/contrib/nosql/redis/v2 v2.8.3/go.mod h1:kPSHCSoDQZNKcJ/ZlLd/c1sGKR+0BJRa5nCP3YkSteo=
+github.com/gogf/gf/v2 v2.8.3 h1:h9Px3lqJnnH6It0AqHRz4/1hx0JmvaSf1IvUir5x1rA=
+github.com/gogf/gf/v2 v2.8.3/go.mod h1:n++xPYGUUMadw6IygLEgGZqc6y6DRLrJKg5kqCrPLWY=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
 github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
