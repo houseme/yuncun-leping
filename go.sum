@@ -94,8 +94,8 @@ github.com/gogf/gf/contrib/drivers/mysql/v2 v2.9.3 h1:P4jrnp+Vmh3kDeaH/kyHPI6rfo
 github.com/gogf/gf/contrib/drivers/mysql/v2 v2.9.3/go.mod h1:yEhfx78wgpxUJhH9C9bWJ7I3JLcVCzUg11A4ORYTKeg=
 github.com/gogf/gf/contrib/nosql/redis/v2 v2.9.3 h1:VTbeHq8XpBCWFIwBGmuBl+jP8AepULnpgNz8GPBKBRQ=
 github.com/gogf/gf/contrib/nosql/redis/v2 v2.9.3/go.mod h1:gcidgAYn4IWbx08QUThg7jw6bz3KklXI9/5zg8jnVHY=
-github.com/gogf/gf/v2 v2.9.3 h1:qjN4s55FfUzxZ1AE8vUHNDX3V0eIOUGXhF2DjRTVZQ4=
-github.com/gogf/gf/v2 v2.9.3/go.mod h1:w6rcfD13SmO7FKI80k9LSLiSMGqpMYp50Nfkrrc2sEE=
+github.com/gogf/gf/v2 v2.9.4 h1:6vleEWypot9WBPncP2GjbpgAUeG6Mzb1YESb9nPMkjY=
+github.com/gogf/gf/v2 v2.9.4/go.mod h1:Ukl+5HUH9S7puBmNLR4L1zUqeRwi0nrW4OigOknEztU=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
 github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
@@ -166,8 +166,8 @@ github.com/olekukonko/errors v1.1.0 h1:RNuGIh15QdDenh+hNvKrJkmxxjV4hcS50Db478Ou5
 github.com/olekukonko/errors v1.1.0/go.mod h1:ppzxA5jBKcO1vIpCXQ9ZqgDh8iwODz6OXIGKU8r5m4Y=
 github.com/olekukonko/ll v0.0.9 h1:Y+1YqDfVkqMWuEQMclsF9HUR5+a82+dxJuL1HHSRpxI=
 github.com/olekukonko/ll v0.0.9/go.mod h1:En+sEW0JNETl26+K8eZ6/W4UQ7CYSrrgg/EdIYT2H8g=
-github.com/olekukonko/tablewriter v1.0.9 h1:XGwRsYLC2bY7bNd93Dk51bcPZksWZmLYuaTHR0FqfL8=
-github.com/olekukonko/tablewriter v1.0.9/go.mod h1:5c+EBPeSqvXnLLgkm9isDdzR3wjfBkHR9Nhfp3NWrzo=
+github.com/olekukonko/tablewriter v1.1.0 h1:N0LHrshF4T39KvI96fn6GT8HEjXRXYNDrDjKFDB7RIY=
+github.com/olekukonko/tablewriter v1.1.0/go.mod h1:5c+EBPeSqvXnLLgkm9isDdzR3wjfBkHR9Nhfp3NWrzo=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.12.1/go.mod h1:zj2OWP4+oCPe1qIXoGWkgMRwljMUYCdkwsT2108oapk=
@@ -184,8 +184,8 @@ github.com/redis/go-redis/v9 v9.12.1/go.mod h1:huWgSWd8mW6+m0VPhJjSSQ+d6Nh1VICQ6
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
 github.com/rivo/uniseg v0.4.7/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
-github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
-github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
+github.com/rogpeppe/go-internal v1.13.1 h1:KvO1DLK/DRN07sQ1LQKScxyZJuNnedQ5/wKSR38lUII=
+github.com/rogpeppe/go-internal v1.13.1/go.mod h1:uMEvuHeurkdAXX61udpOXGD/AzZDWNMNyH2VO9fmH0o=
 github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca/go.mod h1:uugorj2VCxiV1x+LzaIdVa9b4S4qGAcH6cbhh4qVxOU=
 github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d h1:hrujxIzL1woJ7AwssoOcM/tq5JjjG2yYOc8odClEiXA=
 github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d/go.mod h1:uugorj2VCxiV1x+LzaIdVa9b4S4qGAcH6cbhh4qVxOU=
