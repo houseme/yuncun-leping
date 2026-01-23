@@ -1,8 +1,8 @@
 module github.com/houseme/yuncun-leping
 
-go 1.24.0
+go 1.25.0
 
-toolchain go1.24.1
+toolchain go1.25
 
 require (
 	github.com/btcsuite/btcd/btcutil v1.1.6
