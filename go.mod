@@ -2,11 +2,9 @@ module github.com/houseme/yuncun-leping
 
 go 1.25.0
 
-toolchain go1.25
-
 require (
 	github.com/btcsuite/btcd/btcutil v1.1.6
-	github.com/gocolly/colly/v2 v2.1.1-0.20230620150846-a6e3d81fe6b7
+	github.com/gocolly/colly/v2 v2.3.0
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.9.8
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.9.8
 	github.com/gogf/gf/v2 v2.9.8
@@ -24,12 +22,12 @@ require (
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.5.0 // indirect
-	github.com/PuerkitoBio/goquery v1.10.1 // indirect
+	github.com/PuerkitoBio/goquery v1.11.0 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
-	github.com/antchfx/htmlquery v1.3.4 // indirect
-	github.com/antchfx/xmlquery v1.4.3 // indirect
-	github.com/antchfx/xpath v1.3.3 // indirect
-	github.com/bits-and-blooms/bitset v1.20.0 // indirect
+	github.com/antchfx/htmlquery v1.3.5 // indirect
+	github.com/antchfx/xmlquery v1.5.0 // indirect
+	github.com/antchfx/xpath v1.3.5 // indirect
+	github.com/bits-and-blooms/bitset v1.24.4 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
@@ -52,7 +50,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
-	github.com/nlnwa/whatwg-url v0.5.1 // indirect
+	github.com/nlnwa/whatwg-url v0.6.2 // indirect
 	github.com/olekukonko/errors v1.1.0 // indirect
 	github.com/olekukonko/ll v0.0.9 // indirect
 	github.com/olekukonko/tablewriter v1.1.0 // indirect
