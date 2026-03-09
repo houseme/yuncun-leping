@@ -374,11 +374,11 @@ func (h *UtilHelper) Base58Encode(data []byte) string {
 
 // PasswordBase58Hash password base58 hash
 func (h *UtilHelper) PasswordBase58Hash(password string) (string, error) {
-	data, err := h.Sha256OfShort(password)
+	hash, err := bcrypt.GenerateFromPassword([]byte(strings.TrimSpace(password)), bcrypt.DefaultCost)
 	if err != nil {
-		return "", gerror.Wrap(err, "password base58 hash sha256 short failed")
+		return "", gerror.Wrap(err, "password base58 hash bcrypt failed")
 	}
-	return h.Base58Encode(data), nil
+	return h.Base58Encode(hash), nil
 }
 
 // GenerateShortLink generate short link
