@@ -6,8 +6,8 @@ require (
 	github.com/btcsuite/btcd/btcutil v1.1.6
 	github.com/gocolly/colly/v2 v2.3.0
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.10.0
-	github.com/gogf/gf/contrib/nosql/redis/v2 v2.10.0
-	github.com/gogf/gf/v2 v2.10.0
+	github.com/gogf/gf/contrib/nosql/redis/v2 v2.10.2
+	github.com/gogf/gf/v2 v2.10.2
 	github.com/houseme/gocrypto v1.2.1
 	github.com/houseme/snowflake v1.6.5
 	go.opentelemetry.io/otel v1.43.0
